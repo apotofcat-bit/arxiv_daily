@@ -550,8 +550,11 @@ def main():
             bodies[item["id"]] = body
             item["figures"] = download_figures(item["id"], figs)
             compress_figures(item["id"])
-            item["figures"] = [re.sub(r"\.(png|jpg|jpeg)$", ".webp", f) if (FIGS / re.sub(r"\.(png|jpg|jpeg)$", ".webp", f)).exists() else f
-                               for f in item["figures"]]
+            # 路径是相对 public/ 的（figs/<id>/x.png），压缩后要改成 .webp
+            def _to_webp(f):
+                alt = re.sub(r"\.(png|jpg|jpeg)$", ".webp", f)
+                return alt if (PUB / alt).exists() else f
+            item["figures"] = [_to_webp(f) for f in item["figures"]]
             print(f"   {item['id']}  正文 {ntok(body)} tok · 图 {len(item['figures'])}")
 
         print(f"· 生成卡片（{cfg['llm']['model']}）")
