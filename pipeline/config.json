@@ -1,0 +1,39 @@
+{
+  "arxiv": {
+    "categories": ["astro-ph.GA"],
+    "rss": "https://rss.arxiv.org/rss/astro-ph.GA",
+    "html_base": "https://arxiv.org/html"
+  },
+  "interest": {
+    "description": "high-redshift galaxy observations: JWST/NIRSpec/NIRCam/MIRI spectroscopy and imaging at z > 4, Lyman-alpha emitters, Lyman break galaxies, reionization-era galaxies, extremely metal-poor and Pop III candidates, nebular emission lines and metallicity diagnostics, stellar populations and SED fitting, dust and ALMA continuum, quasar hosts at cosmic dawn, gravitational lensing of high-z galaxies",
+    "keywords": ["JWST", "NIRSpec", "NIRCam", "MIRI", "ALMA", "MUSE", "Keck", "VLT", "X-shooter", "Euclid", "Roman", "Lyman", "Lyα", "Ly-alpha", "metal-poor", "Pop III", "reionization", "Epoch of Reionization", "quasar", "LAE", "LBG", "z = 5", "z = 6", "z = 7", "z = 8", "z ~ 5", "z ~ 6", "z ~ 7", "z ~ 8", "high-redshift", "galaxy"],
+    "exclude": ["N-body", "hydrodynamical simulation", "zoom-in simulation", "stellar streams", "exoplanet", "solar system", "asteroid"]
+  },
+  "select": {
+    "top_n": 5,
+    "prefilter_n": 18
+  },
+  "llm": {
+    "provider": "deepseek",
+    "base_url": "https://api.deepseek.com/v1",
+    "model": "deepseek-chat",
+    "api_key_env": "DEEPSEEK_API_KEY",
+    "max_body_tokens": 14000,
+    "temperature": 0.3,
+    "concurrency": 3
+  },
+  "price": {
+    "input_per_m": 0.27,
+    "output_per_m": 1.10,
+    "currency": "USD",
+    "symbol": "$"
+  },
+  "push": {
+    "enabled": false,
+    "channel": "ntfy",
+    "server": "https://ntfy.sh",
+    "topic": "CHANGE_ME",
+    "url": ""
+  },
+  "output": "../public"
+}

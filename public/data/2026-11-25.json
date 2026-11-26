@@ -1,0 +1,125 @@
+{
+  "date": "2026-11-25",
+  "label": "11.25 WED",
+  "scanned": 41,
+  "matched": 18,
+  "greeting": "今天 astro-ph 新到 41 篇。按你的方向留下 5 篇，选了 5 篇给你——先看第一款：<b>JWST/NIRSpec 对 AMORE6 的观测暗示自污染星系中存在活跃的 Pop III 恒星形成</b>。",
+  "papers": [
+    {
+      "id": "2611.31355",
+      "title_en": "JWST/NIRSpec observations of AMORE6 suggest active Pop~III star formation in a self-polluted galaxy",
+      "abstract_en": "AMORE6 is a strongly lensed (μ≈78), intrinsically faint galaxy at z=5.725, previously proposed as a metal-free candidate from the absence of [OIII]λ5007 in NIRCam slitless spectroscopy. We present deep JWST/NIRSpec spectroscopy of its brighter image, AMORE6-B. We detect HeIIλλ1640,4686, with HeIIλ4686/Hβ=0.080±0.015 and EW(HeIIλ4686)=35±8 AA, weak [OIII] (R_3=0.25) and CIVλλ1548,51, and no other metal lines. H and He lines give negligible attenuation, T_e≈2×10^4 K, and Y=0.226^+0.022_-0.024. The oxygen abundance, 12+log(O/H)≈6.08^+0.24_-0.80 (0.04-0.4% Z_⊙, depending on the calibration), is the lowest at its stellar mass, while C/O is near or above solar. Photoionization models of different ionizing sources favour metal-free stars with a top-heavy initial mass function (IMF), as in the self-polluted phase of simulated Population III (Pop III) galaxies, or a metal-poor population with a luminous hard X-ray source; ordinary metal-poor populations, very massive stars, and accretion-based sources are disfavoured. A full SED fit in the fiducial self-polluted scenario gives 1.3×10^5 M_⊙ of Pop III stars formed within the last 4 Myr, which ionize mildly enriched gas and leak 86% of their ionizing photons. The HeII-to-Balmer ratio constrains the slope x and characteristic mass M_ch of the Pop III IMF jointly, to 90x-268≲ M_ch/M_⊙≲172x-330 (3σ; M_ch≲70 M_⊙ for a Salpeter slope), excluding the most top-heavy IMFs allowed by near-field constraints. X-ray binaries are a possible alternative, but require either a metal-poor population too young (1 Myr) to host compact objects and an X-ray luminosity far above that of metal-poor galaxies, or 2×10^6 M_⊙ of older Pop III.2 stars whose metals were mostly expelled.",
+      "title_zh": "JWST/NIRSpec 对 AMORE6 的观测暗示自污染星系中存在活跃的 Pop III 恒星形成",
+      "verdict": "深度多线光谱使 AMORE6 成为最可信的 Pop III 候选，替代解未排除。",
+      "abstract_zh": "AMORE6 是 z=5.725 的强透镜暗弱星系，此前因 NIRCam 无缝光谱缺少 [O III] λ5007 被列为无金属恒星形成候选。本文用较亮像 AMORE6-B 的深度 NIRSpec 光谱：He II λ1640、λ4686（λ4686/Hβ=0.080）与 C IV 均被探测，[O III] 很弱（R3=0.25）。氢氦线给出可忽略衰减、Te≃2×10^4 K、Y=0.226。氧丰度 12+log(O/H)≃6.08，为太阳的 0.04%–0.4%，C/O 接近或高于太阳。模型偏好 top-heavy IMF 的无金属星族，或贫金属星族加硬 X 射线源。SED 拟合给出 4 Myr 内 1.3×10^5 M⊙ Pop III 恒星，86% 电离光子逃逸。",
+      "background": "真正的 Pop III 系统极难确认：强 He II 也可由非零金属度的极大质量星、双星、X 射线双星或黑洞吸积提供；[O III] 弱也未必等于低氧丰度，它取决于电离参数、气体密度与密度束缚几何。此前的 AMORE6 仅有 NIRCam 无缝光谱的 Hα 探测与 [O III] 上限，氧丰度由单一线比在固定电离参数、密度与 1 Myr BPASS 星族假设下推得；数据只覆盖 3–4 µm，拿不到 He II 与紫外金属线。GLIMPSE-16043 的后续光谱已因探测到 [O III] 推翻其无金属解释。",
+      "summary": [
+        "对 AMORE6-B 做 G140M/G235M/G395M 深度 NIRSpec 多目标光谱，覆盖静止系紫外至光学。",
+        "联合拟合氢氦复合线求衰减、温度、密度与 Y，再用 Cloudy 比较六类电离源的全线谱。",
+        "谱线偏好 top-heavy IMF 的无金属星族：O/H 仅太阳的 0.04%–0.4%，C/O 偏高，86% 电离光子逃逸。"
+      ],
+      "comment": "卖点基本成立：He II λ1640 达 35σ，H 与 He 线联合拟合、六类电离源的全谱对比（含上限）比单线比稳健，作者也讨论了放大率、通量定标与 O/H 外推带来的 0.9 dex 弥散。保留意见是 Te 并非直接测得，Y 依赖几条微弱 He I 线，O/H 仍靠外推；无金属星族与贫金属加硬 X 射线源未被完全分开。它与 Hebe、LAP1、GS-z12 的 C/O 讨论同属一挂，关心 Pop III 与早期富集者值得细读。",
+      "read_suggestion": "5 + 6.1 + 6.4 + 9，附录可跳过",
+      "mood": "impressed",
+      "figures": [
+        "figs/2611.31355/amore6_overview.webp",
+        "figs/2611.31355/amore6_mzr.webp",
+        "figs/2611.31355/amore6_co_vs_oh.webp"
+      ]
+    },
+    {
+      "id": "2512.19695",
+      "title_en": "Ionizing Photon Production Efficiencies and Chemical Abundances at Cosmic Dawn Revealed by Ultra-Deep Rest-Frame Optical Spectroscopy of JADES-GS-z14-0",
+      "abstract_en": "JWST has discovered an early period of galaxy formation that was more vigorous than expected, which has challenged our understanding of the early Universe. In this work, we present the longest spectroscopic integration ever acquired by JWST/MIRI (t_obs ≈ 51 hr). This spectrum covers the brightest rest-frame optical nebular emission lines for the luminous galaxy JADES-GS-z14-0 at z = 14.18. Most notably, we detect [OIII] λλ 4959,5007 at ≈ 14 σ and Hα at ≈ 4 σ with these ultra-deep observations. These lines reveal that JADES-GS-z14-0 has low dust attenuation with a recent star-formation rate of SFR ≈ 8 ± 2 M_⊙ / yr, star-formation rate surface density of Sigma_SFR ≈ 20 ± 5 M_⊙/yr/kpc^2, and ionizing photon production efficiency of xi_ion ≈ 10^25.3 ± 0.1 Hz/erg. Using standard strong-line diagnostics, we infer a gas-phase oxygen abundance of [O/H] ≈ -1.2 ± 0.2 (≈ 6% Z_⊙), carbon-to-oxygen ratio of [C/O] ≈ -0.4 ± 0.2, ionization parameter of log_10(U) ≳ -2.4, and density of n_H ≈ 690 ± 200 cm^-3. Using detailed photoionization modeling, we instead derive [O/H] ≈ -0.2_-0.4^+0.4 (≈ 60% Z_⊙). The inferred properties of JADES-GS-z14-0 are similar to those measured for similarly luminous galaxies at z > 10 with previous MIRI/Spectroscopy, such as GHZ2/GLASSz12, GN-z11, and MACS0647-JD1. Existing simulations are unable to reproduce the empirical and inferred properties of JADES-GS-z14-0. This work demonstrates an important step toward understanding the formation of the first stars and heavy elements in the Universe. [Abridged]",
+      "title_zh": "超深静止系光学光谱揭示宇宙黎明时期 JADES-GS-z14-0 的电离光子产生效率与化学丰度",
+      "verdict": "MIRI 最长积分拿到 z=14 的光学线，金属丰度仍差 0.8 dex。",
+      "abstract_zh": "本文呈现 MIRI 迄今最长的光谱积分（约 34 小时），覆盖 z=14.18 的 JADES-GS-z14-0 的静止系光学强线，以约 11σ 探测 [O III]、约 4σ 探测 Hα。由此得到低尘埃衰减、恒星形成率 10±2 M⊙/yr、电离光子产生效率 10^25.3±0.1 Hz/erg。强线诊断给出 12+log(O/H)=7.6±0.4（约 10% 太阳）、[C/O]=-0.4±0.4、log U≳-2.4、密度 720±210 cm^-3；光致电离模型则给 8.4（约 50% 太阳）、log U=-1.5。其性质与 z>10 的 GHZ2、GN-z11、MACS0647-JD1 相似。光谱还含 He I λ5876 的暂定探测，暗示可能有激波气体。",
+      "background": "JADES-GS-z14-0 是 z>14 仅有的两个光谱确认星系之一，此前金属丰度估计分歧很大：Helton 等由测光得 R3≈2.5（低于 10% 太阳），Ferrara 得 R3≈0.5（约 1% 太阳），Carniani 等结合 ALMA 与 NIRSpec 得 R3≈5.6（约 20% 太阳）。裁决只能直接测静止系光学线，而 z>12 只有 MIRI 能做。另一方面，JWST 发现的高红移亮星系数量超出许多理论预期，暴发、更高效率与不同 IMF 三种解释各有预言，需要独立的 ξion 与等值宽来区分。",
+      "summary": [
+        "用 MIRI/LRS 对 JADES-GS-z14-0 积分约 34 小时，取静止系光学强线。",
+        "测 [O III] 与 Hα，做强线诊断，并用 Cue 光致电离模型联合拟合多条线与上限。",
+        "低尘埃、SFR 10±2、ξion 10^25.3；强线给 O/H=7.6，Cue 给 8.4，密度退化明显。"
+      ],
+      "comment": "数据是里程碑：MIRI/LRS 约 34 小时积分，拿到 z=14 星系的 [O III] 与 Hα。但解释单薄：可靠线只有两条，He I λ5876 仅在一个 nod 出现，属暂定；丰度在强线（7.6）与 Cue（8.4）间差 0.8 dex。ξion 接近经典值而远低于星族上限，因此倾向排除 top-heavy IMF，支持星暴间歇与高恒星形成效率。单天体，普适性有限，与 GHZ2、GN-z11、MACS0647-JD1 同系列。",
+      "read_suggestion": "V.1–V.4 + VI + VII.1，III 可略读",
+      "mood": "neutral",
+      "figures": [
+        "figs/2512.19695/Full_Spectrum.webp",
+        "figs/2512.19695/ZoomIn_EmissionLines.webp",
+        "figs/2512.19695/Cue_results_corner.webp"
+      ]
+    },
+    {
+      "id": "2603.15761",
+      "title_en": "Out of oxygen: Extremely metal-poor galaxy candidates identified at $2.5 < z < 6.5$ with deep JADES medium-band imaging",
+      "abstract_en": "JWST is beginning to uncover a population of extremely metal-poor galaxies (EMPGs, Z 3, mostly through serendipitous NIRSpec discoveries and blind slitless spectroscopy. To accelerate our understanding of pristine star formation, we further develop a methodology to identify EMPG candidates from photometry, using the extensive deep medium-band imaging from JADES. Our EMPG candidates at 2.5 < z < 6.5 exhibit strong photometric boosts by Hα, yet correspondingly weak boosts by [O III] + Hβ, likely indicating extremely low metallicity to explain their lack of [O III] emission. We further demand our EMPG candidates to have strong Balmer jumps, as revealed by medium-band imaging, to ensure that they are young starbursts, as opposed to broad-line AGN/LRDs, though contamination by dusty/dense-gas starbursts and highly-obscured AGN remains a concern. SED-fitting with near-pristine models (~0.1-1%~Z_⊙) indicates that our 14 EMPG candidates are low-mass (median M_* ≈ 10^6.7~M_⊙), faint dwarf galaxies (M_UV ≈ -16.9), with high ionizing photon production efficiencies (log ( xi_ion, obs/ mathrm{(Hz erg^-1)}) ≈ 26.0). Hence these are plausible sites of near-pristine star formation, comprising ~0.02-0.4% of 2.5 < z < 6.5 galaxies at -19 < M_UV < -16. We discuss this extremely metal-poor extension to the mass-metallicity relation. We forecast that deep (~28 h) NIRCam slitless spectroscopy can identify bright EMPGs through strong Hβ but lack of [O III] emission, or secure the redshifts of fainter systems through Hα detections. Highly-multiplexed NIRSpec spectroscopy offers an alternate route to discovering the faintest pristine galaxies out to z=10, without requiring deep medium-band/MIRI imaging to identify secure candidates.",
+      "title_zh": "缺氧：利用深 JADES 中带成像在 2.5 < z < 6.5 证认出极贫金属星系候选",
+      "verdict": "中带测光把贫金属候选扩到 22 个，纯度却要等光谱来裁决。",
+      "abstract_zh": "JWST 正通过 NIRSpec 偶然发现与无缝光谱，揭示 z>3 的极贫金属星系（EMPGs，Z<1% Z⊙）。本文利用 JADES 深 NIRCam 中带成像，发展从测光识别 EMPG 候选的方法：候选在 2.5<z<6.5 有强 Hα 增强而 [O III]+Hβ 很弱，并需强 Balmer jump 以排除 AGN 与 LRD。但候选光谱提示尘埃或致密气体星暴与遮蔽 AGN 仍是污染源。以近原始模型（0.1%–1% Z⊙）拟合，22 个候选是低质量（中位 10^6.7 M⊙）、暗弱（MUV≈-16.6）矮星系，log ξion≈26.0，占 -19<MUV<-16 星系的 0.04%–0.6%。文中讨论其对质量—金属丰度与基本金属丰度关系的延伸，并展望未来光谱。",
+      "background": "z>3 的极贫金属星系此前多靠 NIRSpec 偶然发现或无缝光谱盲搜。Trussler 等提出用宽带颜色选 Pop III 候选：强 Hα 而弱 [O III] 会在对应宽带间留下特征性红色；Fujimoto 等把选择推到更高红移，并用中带证认 Balmer jump。但 GLIMPSE-16043 的 30 小时 NIRSpec 后续观测测到 [O III]/Hβ=1.77，直接否定无金属解释。中带成像能分离线与连续谱、给出 Balmer jump 与更紧的丰度约束，此前尚未系统用于 z~3–6 的搜索。",
+      "summary": [
+        "用 JADES 深中带成像，按 Hα 强、[O III]+Hβ 弱做测光预选。",
+        "再要求 Balmer jump，并用 0.1%–1% Z⊙ 的近原始 SED 模型拟合，377 个初选中留下 22 个。",
+        "候选为 M*~10^6.7、MUV~-16.6 的暗矮星系，ξion 高，占 0.04%–0.6%；123650 提示尘埃或致密气体污染。"
+      ],
+      "comment": "方法有想法：把 Pop III 的宽带选择推广到中带，用 Balmer jump 压 AGN/LRD，再用近原始 SED 拟合收口，并诚实讨论 123650 的 Balmer 递减与 1008821 的隐藏 AGN。但 22 个候选全无光谱确认，唯一有 PRISM 光谱的 123650 更像致密气体星暴；丰度来自低于定标范围的 SED 外推，ξion≈26.0 超过无尘 IMF 的上限，靠尘埃来凑。作为候选目录可读，统计结论要打折扣。",
+      "read_suggestion": "3.1 + 3.4 + 4.2 + 5，候选表可跳过",
+      "mood": "skeptical",
+      "figures": [
+        "figs/2603.15761/Ha_vs_OIII.webp",
+        "figs/2603.15761/mass_metallicity.webp",
+        "figs/2603.15761/colours.webp"
+      ]
+    },
+    {
+      "id": "2611.32342",
+      "title_en": "The ALMA REBELS Survey: multi-band dust continuum observations reveal heavily obscured starbursts among UV-bright galaxies at $z\\sim7$",
+      "abstract_en": "Detailed studies with the Atacama Large Millimeter/submillimeter Array (ALMA) have shown that dust is widespread even in UV-luminous galaxies at z≳6.5. Multi-band continuum observations are critical to fully characterize these early dust reservoirs. We present a homogeneous analysis of multi-band ALMA observations from the REBELS Large Program and seven follow-up programs, targeting thirteen massive galaxies at 6.5≲ z≲7.7 in at least two bands, including Band 8. Through optically thin modified blackbody fitting, we infer the dust masses, temperatures, and infrared luminosities of our targets. Their dust temperatures span T_dust≈30-70 K, and a stack reveals an average T_dust=49_-8^+11 K. Three sources nominally qualify as ultra-luminous infrared galaxies (ULIRGs; L_IR>10^12 L_⊙), with total star formation rates of SFR_UV+IR≈160-300 M_⊙ yr^-1, the highest of which is found in our most distant target, REBELS-18 at z=7.67. Their star formation is heavily obscured, with ≳90% emerging in the infrared, compared to an already large average obscured fraction of f_obs=0.75±0.11 for the stack. These SFRs are consistent with the reconstructed growth histories of some massive quiescent galaxies at z≈4-5, suggesting that dusty yet UV-bright galaxies at z~7 are plausible progenitors of such systems. The sample moreover displays large dust-to-stellar mass ratios (M_dust/M_ star = 0.4_-0.2^+0.3%), best reproduced by models in which dust grows efficiently in the interstellar medium. This demonstrates that a dust-rich, IR-luminous, and heavily obscured galaxy population is already in place well into the Epoch of Reionization.",
+      "title_zh": "ALMA REBELS 巡天：多波段尘埃连续谱揭示 z~7 紫外明亮星系中的重度遮蔽星暴",
+      "verdict": "多波段尘埃连续谱显示 z~7 紫外亮星系多数恒星形成被遮蔽，温度定标需更新。",
+      "abstract_zh": "尘埃普遍存在于 z≳6.5 的紫外亮星系，多波段连续谱是刻画早期尘埃库的关键。本文均匀分析 REBELS 及七个后续项目的多波段 ALMA 观测，覆盖 13 个 6.5≲z≲7.7 的大质量星系，每个至少两个波段并含 Band 8。光学薄修正黑体拟合给出尘埃温度与红外光度：温度跨 30–70 K，叠加平均 49 K。三个源名义上属极亮红外星系（LIR>10^12 L⊙），总恒星形成率 160–300 M⊙/yr，最高者是最远的 REBELS-18（z=7.67）。其恒星形成重度遮蔽，≳90% 由红外显现，叠加平均遮蔽比例 0.75±0.11。这些 SFR 与 z≈4–5 宁静星系的成长史相符，暗示其为可能祖先。尘埃与恒星质量比为 0.4%，宜用高效 ISM 尘埃增长解释。",
+      "background": "再电离时代已知的尘埃星系大多是从紫外选样本后追认的。单波段连续谱观测无法约束尘埃 SED，只能固定温度或借助物理模型，因此尘埃温度、尘埃质量与红外光度长期不确定；已有多波段样本提示温度弥散大，且平均比低红移更暖，但 z~7 的统计仍很小，Band 8 探测尤其稀缺。另一方面，JWST 在 z≈4–5 发现大量大质量宁静星系，其重构成长史要求 z~7 存在强烈的遮蔽星暴，而这类星系是否就是那些紫外明亮的尘埃星系，需要可靠的遮蔽恒星形成率来检验。",
+      "summary": [
+        "汇总 REBELS 及七个后续项目共 31 次 ALMA 观测，13 个 z~7 星系至少两个波段。",
+        "均匀成像与测光，做光学薄修正黑体拟合，采用逆温度先验并叠加双波段数据。",
+        "Tdust 30–70 K、叠加 49 K；3 个 ULIRG，SFR 160–300，fobs=0.75，尘埃/恒星质量比 0.4%。"
+      ],
+      "comment": "扎实的样本工作：31 次观测、8 个项目的数据被均匀重成图与一致测光，并用逆温度先验替代常用的平坦温度先验，附录用模拟证明后者在低信噪比下会高估温度，这对后续单波段推尘埃质量的人有实用价值。13 个源仍少，且样本偏向已被尘埃探测到的紫外亮星系，遮蔽比例 0.75 不能外推到整体紫外选样本；3 个 ULIRG 与宁静星系祖先的联系只是相符，不是证明。方法细节值得读。",
+      "read_suggestion": "4.3 + 5.1 + 6.2，附录 G 讲先验值得一看",
+      "mood": "impressed",
+      "figures": [
+        "figs/2611.32342/MBB_fitting_single_beta_V2.webp",
+        "figs/2611.32342/Tdust_vs_redshift.webp",
+        "figs/2611.32342/fobs_vs_Mstar.webp"
+      ]
+    },
+    {
+      "id": "2506.02099",
+      "title_en": "The Stellar Populations and Rest-Frame Colors of Star-Forming Galaxies at $z \\approx 8$: Exploring the Impact of Filter Choice and Star Formation History Assumption with JADES",
+      "abstract_en": "Our understanding of the physical properties of star-forming galaxies during the Epoch of Reionization (EoR, at z > 6) suffers from degeneracies among the apparent properties of the stars, the nebular gas, and the dust. These degeneracies are most prominent with photometry, which has insufficient (1) spectral resolution and (2) rest-frame spectral coverage. We explore ways to break these degeneracies with a sample of N = 22 high-redshift star-forming galaxies at 7 < z_phot leq 9, using some of the deepest existing imaging from JWST/NIRCam and JWST/MIRI with JADES. Key to this study is the imaging from JWST/MIRI at 7.7 μm, which provides coverage of the rest-frame I-band at the observed redshifts. We infer stellar population properties and rest-frame colors using a variety of filter sets and star formation history assumptions to explore the impact of these choices. Evaluating these quantities both with and without the 7.7 μm data point shows that dense spectral coverage with JWST/NIRCam (eight or more filters, including at least one medium-band) can compensate for lacking the rest-frame I-band coverage for the vast majority (≈ 80%) of our sample. Furthermore, these galaxy properties are most consistently determined by assuming the delayed-tau star formation history, which provides the smallest offsets and scatters around these offsets when including JWST/MIRI. Within extragalactic surveys like JADES and CEERS, our findings suggest that robust characterization of the stellar population properties and rest-frame colors for high-redshift star-forming galaxies is possible with JWST/NIRCam alone at z ≈ 8.",
+      "title_zh": "z≈8 恒星形成星系的星族与静止系颜色：滤光片选择与恒星形成历史假设的影响",
+      "verdict": "NIRCam 密采样可替代 MIRI，delayed-tau 最稳；属方法学。",
+      "abstract_zh": "再电离时代（z>6）恒星、星云气体与尘埃的表观性质存在退化，测光尤其严重。本文用 JADES 最深的 JWST/NIRCam 与 MIRI 成像，研究 22 个 7<zphot≤9 的恒星形成星系。关键是 7.7 µm 的 MIRI 成像，在这些红移覆盖静止系 I 带；作者用多种滤光片组合与恒星形成历史假设推断星族性质与静止系颜色。比较含与不含 7.7 µm 的结果可见，对约 80% 样本，NIRCam 的密集覆盖（八个以上滤光片，含至少一个中带）可弥补缺少静止系 I 带。假设 delayed-tau 时性质最一致，含 MIRI 的偏差与离散最小。对 JADES、CEERS 这类巡天，仅凭 NIRCam 即可稳健刻画 z≈8 星形成星系的星族与静止系颜色。",
+      "background": "EoR 星系的恒星、星云气体与尘埃在测光上高度退化。Papovich 等与 Wang 等发现加入 MIRI 后恒星质量与恒星形成率下降 2–3 倍，但前者缺 NIRCam 数据，后者只研究大质量星系；Alberts 等与 Iani 等分别在更低红移的宁静与后星暴星系以及 Lyα 发射体上指出，NIRCam 密采样可替代 MIRI。缺少的是对 z≈8 典型恒星形成星系的一般性检验。此外，恒星形成历史假设本身会让质量估计差 2–5 倍，而 bursty SFH 在高红移似乎普遍，选哪种先验并非无关紧要。",
+      "summary": [
+        "选出 22 个 7<z≤9、MIRI/F770W 显著探测的恒星形成星系。",
+        "用四组滤光片与四种 SFH 各拟合一遍，比较含与不含 7.7 µm 的结果。",
+        "约 80% 样本可由 NIRCam 密采样替代 MIRI；delayed-tau 的偏差与离散最小。"
+      ],
+      "comment": "这是方法论文章，结论对巡天策略有用：z≈8、MUV 约 -19 的典型星形成星系，只要有八个以上 NIRCam 滤光片（含中带），不加 MIRI 也能把星族参数与静止系颜色定得差不多，但给不出新物理。样本仅 22 个且是 F770W 显著探测的较亮系统，80% 依赖作者设定的一致阈值；delayed-tau 胜出也可能反映先验与信噪比的匹配，而非真实 SFH。适合做高红移 SED 拟合或设计 JWST 后续观测的人读。",
+      "read_suggestion": "IV.2 + V.1 + V.2 + VI，附录可跳过",
+      "mood": "neutral",
+      "figures": [
+        "figs/2506.02099/Summary_StellarPopulations_ConstantSFH.webp",
+        "figs/2506.02099/Summary_RestFrameColors_ConstantSFH.webp",
+        "figs/2506.02099/SED_165595_ConstantPrior_JADES_fixedRedshift.webp"
+      ]
+    }
+  ],
+  "usage": {
+    "input": 74033,
+    "output": 6220,
+    "total": 80253
+  },
+  "model": "deepseek-chat"
+}

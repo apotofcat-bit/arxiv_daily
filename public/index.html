@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<meta name="theme-color" content="#191a1d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>AMADEUS · 每日文献</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <div class="statusbar chrome">
+    <span id="clock">--:--</span>
+    <span>5G <span class="b"></span></span>
+  </div>
+
+  <header class="brand chrome">
+    <span class="bar"></span>
+    <span class="dm">AMADEUS</span>
+    <span class="tag" id="brandTag">DAILY</span>
+  </header>
+
+  <!-- ============ 列表 ============ -->
+  <section id="view-list" class="view">
+    <div class="nix chrome" id="nix">
+      <div class="c"><div class="d" id="kScanned">--</div><div class="k">SCANNED</div></div>
+      <div class="c"><div class="d" id="kMatched">--</div><div class="k">MATCHED</div></div>
+      <div class="c"><div class="d" id="kToday">--</div><div class="k">TODAY</div></div>
+    </div>
+
+    <div class="sub chrome">
+      <p id="greeting">正在读取今日论文…</p>
+    </div>
+
+    <div class="sec" id="listSec">TODAY</div>
+
+    <div class="list" id="list">
+      <div class="empty"><div class="big">LOADING</div>正在拉取数据</div>
+    </div>
+
+    <div class="chips chrome">
+      <span class="chip"><i></i><span id="chipSync">--</span></span>
+      <a class="chip" href="#/cal"><i></i>ARCHIVE</a>
+      <a class="chip tok push" href="#/stats"><i></i><span id="chipTok">-- TOKENS</span></a>
+    </div>
+  </section>
+
+  <!-- ============ 详情 ============ -->
+  <section id="view-detail" class="view" hidden>
+    <div class="detail" id="detailScroll">
+
+      <div class="crumb">
+        <a href="#/" id="dBack">← TODAY</a>
+        <span id="dIndex">-- / --</span>
+      </div>
+
+      <div class="split chrome">
+        <div class="left" id="l2dHost">
+          <div class="ld" id="l2dLoading">LIVE2D<br>加载中…</div>
+          <span class="mood" id="dMood">neutral</span>
+        </div>
+        <div class="right" id="dFigWrap"><div class="nofig">NO FIGURE</div></div>
+      </div>
+
+      <h1 class="t" id="dTitle">—</h1>
+      <div class="t-en" id="dTitleEn"></div>
+      <div class="by" id="dMeta"></div>
+
+      <div class="sub small chrome"><p id="dSub">—</p></div>
+
+      <div class="sec2">COMMENT</div>
+      <p class="judge" id="dComment"></p>
+
+      <div class="sec2">ABSTRACT</div>
+      <p class="x" id="dAbstract"></p>
+
+      <details class="orig" id="dOrigWrap">
+        <summary>ENGLISH ORIGINAL</summary>
+        <p class="x en" id="dAbstractEn"></p>
+      </details>
+
+      <div class="sec2">BACKGROUND</div>
+      <p class="x" id="dBackground"></p>
+
+      <div class="sec2">SUMMARY</div>
+      <ul class="pts" id="dSummary"></ul>
+
+      <div class="sec2">我的批注</div>
+      <div class="noteedit">
+        <textarea id="dNote" rows="4" placeholder="写点什么……自动保存"></textarea>
+        <div class="savedline"><span id="dNoteStatus">—</span></div>
+      </div>
+
+      <div class="sec2">READ</div>
+      <p class="x" id="dRead"></p>
+
+      <div class="thumbs" id="dThumbs"></div>
+      <div style="height:14px"></div>
+    </div>
+
+    <div class="chips chrome">
+      <span class="chip"><i></i>FULLTEXT</span>
+      <a class="chip v" href="https://arxiv.org/abs/" id="dArxiv" target="_blank" rel="noopener"><i></i>ARXIV</a>
+      <a class="chip tok push" href="#/stats"><i></i><span id="chipTok2">-- TOKENS</span></a>
+    </div>
+  </section>
+
+  <!-- ============ 日历 ============ -->
+  <section id="view-cal" class="view" hidden>
+    <div class="detail">
+      <div class="crumb"><a href="#/">← TODAY</a><span>ARCHIVE</span></div>
+
+      <div class="cal">
+        <div class="calhead">
+          <button id="calPrev" aria-label="上个月">‹</button>
+          <span id="calTitle">—</span>
+          <button id="calNext" aria-label="下个月">›</button>
+        </div>
+        <div class="caldow"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+        <div class="calgrid" id="calGrid"></div>
+        <div class="callegend">
+          <span><s class="ok"></s>有内容</span>
+          <span><s class="nt"></s>有批注</span>
+          <span><s class="no"></s>无</span>
+        </div>
+      </div>
+
+      <div class="sec2">批注与备份</div>
+      <p class="x" style="color:var(--faint);font-size:11px">
+        批注存在本机（localStorage），不会上传。换手机或清数据前用下面的导出备份一份。
+      </p>
+
+      <div class="dataio">
+        <button class="btn" id="btnExport">导出到剪贴板</button>
+        <button class="btn ghost" id="btnShowJson">显示文本</button>
+        <button class="btn ghost" id="btnImport">从文本导入</button>
+      </div>
+      <textarea id="ioBox" class="iobox" rows="6" hidden placeholder="粘贴批注 JSON 后点「导入」"></textarea>
+      <div class="savedline"><span id="ioStatus">—</span></div>
+
+      <div class="sec2">统计</div>
+      <p class="x" id="calStats"></p>
+
+      <div style="height:18px"></div>
+    </div>
+    <div class="chips chrome">
+      <span class="chip"><i></i><span id="chipDays">-- DAYS</span></span>
+      <a class="chip tok push" href="#/stats"><i></i>TOKENS</a>
+    </div>
+  </section>
+
+  <!-- ============ 统计 ============ -->
+  <section id="view-stats" class="view" hidden>
+    <div class="detail">
+      <div class="crumb"><a href="#/">← TODAY</a><span>TOKEN USAGE</span></div>
+      <div class="stats">
+        <div class="sec2" style="padding-left:0;padding-right:0">TODAY</div>
+        <div class="kpis">
+          <div class="k"><div class="v" id="sIn">--</div><div class="n">INPUT</div></div>
+          <div class="k"><div class="v" id="sOut">--</div><div class="n">OUTPUT</div></div>
+          <div class="k"><div class="v" id="sTot">--</div><div class="n">TOTAL</div></div>
+        </div>
+
+        <div class="sec2" style="padding-left:0;padding-right:0">LAST 7 DAYS</div>
+        <div class="bars" id="sBars"></div>
+        <div class="legend">
+          <span class="a"><s></s>INPUT</span><span class="b"><s></s>OUTPUT</span>
+        </div>
+
+        <div class="sec2" style="padding-left:0;padding-right:0">ESTIMATE</div>
+        <p class="x" id="sCost" style="padding-left:0;padding-right:0"></p>
+
+        <div class="note">
+          <b>口径</b>：input 含系统提示、正文、图注；output 为卡片 JSON。
+          正文已剥离参考文献。每篇按 <b>约 13k in / 1.2k out</b> 计。
+          单价在 <b>pipeline/config.json</b> 里配置，改完这里跟着变。
+        </div>
+      </div>
+      <div style="height:14px"></div>
+    </div>
+    <div class="chips chrome">
+      <span class="chip"><i></i>LOCAL ONLY</span>
+      <a class="chip tok push" href="#/">BACK</a>
+    </div>
+  </section>
+
+</div>
+
+<script src="vendor/live2dcubismcore.min.js"></script>
+<script src="vendor/pixi.min.js"></script>
+<script src="vendor/cubism4.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+# 依赖
+node_modules/
+pylib/
+.npm-cache/
+
+# 本地缓存与工具
+.chrome/
+pipeline/state/
+*.log
+
+# 构建产物
+../android/
+pipeline/__pycache__/
+__pycache__/
+public/data/cards-*.json
