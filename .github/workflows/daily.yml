@@ -4,6 +4,13 @@ on:
   schedule:
     # arXiv 每天 00:00 ET 公告；01:30 UTC ≈ 09:30 CST，留足解析时间
     - cron: '30 1 * * *'
+  # push 到 main 也触发一次，方便手动验证；bot 自己的提交会被下面的 if 跳过
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'public/data/**'
+      - 'public/figs/**'
+      - '**.md'
   workflow_dispatch:
     inputs:
       date:
@@ -22,6 +29,8 @@ concurrency:
 
 jobs:
   build:
+    # 防止 bot 提交触发新一轮（虽然 GITHUB_TOKEN 推送本身不会递归，双保险）
+    if: github.event_name != 'push' || github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
