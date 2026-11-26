@@ -13,3 +13,9 @@ pipeline/state/
 pipeline/__pycache__/
 __pycache__/
 public/data/cards-*.json
+
+# 绝不入库的密钥类文件
+.env
+.env.*
+*.key
+secrets.json

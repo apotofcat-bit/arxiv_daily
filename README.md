@@ -184,6 +184,41 @@ jobs:
 
 ---
 
+## 安全说明（仓库是公开的）
+
+**API Key 不在仓库里。** 它只存在于 GitHub 的加密 Secret 中，Actions 运行时以环境变量注入，
+日志里会被自动打码（`***`）。全仓库检索过 `.py/.js/.json/.yml` 与全部 git 历史，没有任何硬编码。
+
+### 别人能做什么、不能做什么
+
+| | 可以 | 说明 |
+|---|---|---|
+| 看生成的内容 | ✅ | 仓库和 Pages 本来就是公开的 |
+| Fork 自己跑 | ✅ | 用的是**他自己的** Actions 额度和**他自己的** key，不花你的 |
+| 触发你的 workflow | ❌ | `schedule` 只有 GitHub 自己跑；`push` / `workflow_dispatch` 需要写权限 |
+| 拿到你的 key | ❌ | 没有 `pull_request` 触发器；即使加了，fork 来的 PR 也拿不到 Secret |
+
+### 唯一需要你警惕的
+
+**不要盲目合并改 `.github/` 的 PR。**
+
+PR 本身不会触发 workflow，但如果有人提交一个把 `.github/workflows/daily.yml` 改成
+「把 `${{ secrets.DEEPSEEK_API_KEY }}` 发到某个 URL」的 PR，而你看都不看就合并了——
+下一次 push 就会带着你的 key 执行。
+
+所以规则只有一条：**改 `.github/` 或 `pipeline/` 的 PR，逐行看完再合。** 自己的提交不受影响。
+
+### 如果真的泄漏了
+
+去 DeepSeek 控制台**吊销并重建 key**，然后更新仓库 Secret。这比任何补救都快。
+
+### 已经在仓库里的密钥文件
+
+`.gitignore` 已排除 `.env` / `*.key` / `secrets.json`。本地开发时把 key 放在环境变量里，
+不要写进 `pipeline/config.json`——那个文件是入库的。
+
+---
+
 ## 已知限制
 
 - 只有 `astro-ph.GA`，加分类请改 `config.json` 的 RSS
