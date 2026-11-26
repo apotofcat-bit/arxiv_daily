@@ -19,6 +19,9 @@ const el = (tag, cls, txt) => {
 };
 
 const NOTES_KEY = 'amadeus.notes.v1';
+let BASE = '';                 // '' = 包内快照；否则为远程前缀
+const REMOTE_TIMEOUT = 4000;
+
 const state = {
   index: null,
   day: null,
@@ -54,24 +57,52 @@ function setNote(id, text) {
 }
 
 /* ---------------- 数据 ---------------- */
+async function resolveBase() {
+  const rb = (window.REMOTE_BASE || '').trim();
+  BASE = '';
+  if (!rb) return;
+  // 同源就是自己，不用探测
+  if (rb.startsWith(location.origin)) return;
+  try {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), REMOTE_TIMEOUT);
+    const r = await fetch(rb + 'data/index.json', { cache: 'no-store', signal: ctl.signal });
+    clearTimeout(timer);
+    if (r.ok) { BASE = rb; console.info('[amadeus] 远程数据源', rb); }
+  } catch (e) {
+    console.info('[amadeus] 远程不可达，使用内置快照');
+  }
+}
+
 async function loadIndex() {
   try {
-    const r = await fetch('data/index.json', { cache: 'no-store' });
+    const r = await fetch(BASE + 'data/index.json', { cache: 'no-store' });
     if (!r.ok) throw new Error(r.status);
     return await r.json();
   } catch (e) { console.warn('index.json 失败', e); return { days: [] }; }
 }
 async function getDay(date) {
   if (state.dayCache[date]) return state.dayCache[date];
-  const r = await fetch(`data/${date}.json`, { cache: 'no-store' });
-  if (!r.ok) throw new Error('day ' + date + ' ' + r.status);
-  const d = await r.json();
+  let d = null, usedBase = '';
+  for (const base of BASE ? [BASE, ''] : ['']) {
+    try {
+      const r = await fetch(`${base}data/${date}.json`, { cache: 'no-store' });
+      if (r.ok) { d = await r.json(); usedBase = base; break; }
+    } catch (e) { /* 试下一个 */ }
+  }
+  if (!d) throw new Error('day ' + date + ' 不存在');
+  d._base = usedBase;
   d.papers.forEach(p => {
     p.figures = (p.figures || []).map(f =>
       typeof f === 'string' ? { file: f, caption: '' } : { file: f.file, caption: f.caption || '' });
   });
   state.dayCache[date] = d;
   return d;
+}
+
+function baseOf(p) {
+  const d = state.day;
+  return (d && d._base) || '';
 }
 
 /* ---------------- 路由 ---------------- */
@@ -147,7 +178,7 @@ function renderList() {
       const img = new Image();
       img.alt = ''; img.loading = 'lazy';
       img.onerror = () => { th.innerHTML = ''; th.appendChild(el('span', 'nofig', 'NO FIG')); };
-      img.src = p.figures[0].file;
+      img.src = baseOf(p) + p.figures[0].file;
       th.appendChild(img);
     } else {
       th.appendChild(el('span', 'nofig', 'NO FIG'));
@@ -208,7 +239,8 @@ async function showDetail(date, id) {
     const img = new Image();
     img.alt = '';
     img.onerror = () => { wrap.innerHTML = '<div class="nofig">NO FIGURE</div>'; };
-    img.src = p.figures[0].file;
+    img.src = baseOf(p) + p.figures[0].file;
+    img.onclick = () => openViewer(p, 0);
     wrap.appendChild(img);
     wrap.appendChild(el('span', 'tag2', p.figures[0].caption || 'FIG 1'));
   } else {
@@ -216,9 +248,10 @@ async function showDetail(date, id) {
   }
 
   const th = $('dThumbs'); th.innerHTML = '';
-  p.figures.slice(1).forEach(f => {
+  p.figures.slice(1).forEach((f, i) => {
     const img = new Image(); img.alt = ''; img.loading = 'lazy';
-    img.src = f.file; img.title = f.caption || '';
+    img.src = baseOf(p) + f.file; img.title = f.caption || '';
+    img.onclick = () => openViewer(p, i + 1);
     th.appendChild(img);
   });
 
@@ -420,6 +453,127 @@ function bindIO() {
   };
 }
 
+
+/* ---------------- 图片查看器 ---------------- */
+const V = { paper: null, i: 0, open: false, scale: 1, tx: 0, ty: 0,
+            sx: 0, sy: 0, ox: 0, oy: 0, moved: false, downAt: 0, lastTap: 0 };
+
+function openViewer(paper, index) {
+  if (!paper.figures || !paper.figures.length) return;
+  V.paper = paper;
+  V.i = Math.max(0, Math.min(index, paper.figures.length - 1));
+  V.open = true;
+  $('viewer').hidden = false;
+  renderViewer();
+}
+
+function closeViewer() {
+  V.open = false;
+  $('viewer').hidden = true;
+  resetZoom();
+}
+
+function renderViewer() {
+  const figs = V.paper.figures;
+  const f = figs[V.i];
+  const img = $('vImg');
+  img.style.opacity = '0';
+  const n = new Image();
+  n.onload = () => { $('vImg').src = n.src; $('vImg').style.opacity = '1'; };
+  n.onerror = () => { $('vImg').src = n.src; $('vImg').style.opacity = '1'; };
+  n.src = baseOf(V.paper) + f.file;
+
+  $('vCount').textContent = (V.i + 1) + ' / ' + figs.length;
+  $('vCap').textContent = f.caption || ('图 ' + (V.i + 1));
+
+  const th = $('vThumbs');
+  th.innerHTML = '';
+  figs.forEach((g, i) => {
+    const t = new Image();
+    t.src = baseOf(V.paper) + g.file;
+    t.className = i === V.i ? 'on' : '';
+    t.onclick = (e) => { e.stopPropagation(); V.i = i; renderViewer(); };
+    th.appendChild(t);
+  });
+  resetZoom();
+  preloadNeighbours();
+}
+
+function preloadNeighbours() {
+  const figs = V.paper.figures;
+  [V.i - 1, V.i + 1].forEach(k => {
+    if (figs[k]) { const im = new Image(); im.src = baseOf(V.paper) + figs[k].file; }
+  });
+}
+
+function step(d) {
+  const n = V.paper.figures.length;
+  V.i = (V.i + d + n) % n;
+  renderViewer();
+}
+
+function applyTransform() {
+  $('vImg').style.transform = `translate(${V.tx}px, ${V.ty}px) scale(${V.scale})`;
+}
+function resetZoom() { V.scale = 1; V.tx = 0; V.ty = 0; applyTransform(); }
+
+function bindViewer() {
+  const stage = $('vStage');
+
+  $('vClose').onclick = closeViewer;
+  $('viewer').onclick = (e) => { if (e.target.id === 'viewer') closeViewer(); };
+
+  stage.addEventListener('pointerdown', (e) => {
+    V.dragging = true; V.moved = false;
+    V.sx = e.clientX; V.sy = e.clientY;
+    V.ox = V.tx; V.oy = V.ty;
+    V.downAt = Date.now();
+    stage.setPointerCapture(e.pointerId);
+  });
+
+  stage.addEventListener('pointermove', (e) => {
+    if (!V.dragging) return;
+    const dx = e.clientX - V.sx, dy = e.clientY - V.sy;
+    if (Math.abs(dx) > 6 || Math.abs(dy) > 6) V.moved = true;
+    if (V.scale > 1) {
+      V.tx = V.ox + dx; V.ty = V.oy + dy;
+      applyTransform();
+    }
+  });
+
+  stage.addEventListener('pointerup', (e) => {
+    if (!V.dragging) return;
+    V.dragging = false;
+    const dx = e.clientX - V.sx, dy = e.clientY - V.sy;
+    const dt = Date.now() - V.downAt;
+
+    if (V.scale > 1) return;                 // 放大状态下不翻页
+
+    if (!V.moved && dt < 260) {              // 轻点：判断双击
+      const now = Date.now();
+      if (now - V.lastTap < 320) {
+        V.scale = 2.2;
+        const r = stage.getBoundingClientRect();
+        V.tx = -(e.clientX - r.left - r.width / 2) * 1.2;
+        V.ty = -(e.clientY - r.top - r.height / 2) * 1.2;
+        applyTransform();
+        V.lastTap = 0;
+        return;
+      }
+      V.lastTap = now;
+      return;
+    }
+    if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) step(dx < 0 ? 1 : -1);
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if (!V.open) return;
+    if (e.key === 'Escape') closeViewer();
+    if (e.key === 'ArrowRight') step(1);
+    if (e.key === 'ArrowLeft') step(-1);
+  });
+}
+
 /* ---------------- 启动 ---------------- */
 async function boot() {
   clock(); setInterval(clock, 30000);
@@ -430,8 +584,10 @@ async function boot() {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }
 
+  await resolveBase();
   state.index = await loadIndex();
   bindIO();
+  bindViewer();
 
   window.addEventListener('hashchange', route);
   await route();

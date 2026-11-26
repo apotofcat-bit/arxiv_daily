@@ -188,11 +188,23 @@
     </div>
   </section>
 
+  <!-- ============ 图片查看器 ============ -->
+  <div id="viewer" class="viewer" hidden>
+    <div class="vhead">
+      <span id="vCount">1 / 1</span>
+      <button id="vClose" aria-label="关闭">✕</button>
+    </div>
+    <div class="vstage" id="vStage"><img id="vImg" alt=""></div>
+    <div class="vcap" id="vCap"></div>
+    <div class="vthumbs" id="vThumbs"></div>
+  </div>
+
 </div>
 
 <script src="vendor/live2dcubismcore.min.js"></script>
 <script src="vendor/pixi.min.js"></script>
 <script src="vendor/cubism4.min.js"></script>
+<script src="config.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

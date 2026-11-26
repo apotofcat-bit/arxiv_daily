@@ -271,3 +271,32 @@ details.orig p.en{font-family:var(--sans);font-size:11.2px;line-height:1.92;colo
 .iobox{margin:9px var(--pad) 0;width:calc(100% - var(--pad)*2);background:#0a1014;border:1px solid var(--line);
   border-radius:3px;color:var(--dim);font-family:var(--mono);font-size:9px;line-height:1.7;padding:9px;
   resize:vertical;outline:none}
+
+/* ============ 图片查看器 ============ */
+.viewer{position:fixed;inset:0;z-index:999;background:#05080a;
+  display:flex;flex-direction:column}
+.viewer .vhead{display:flex;align-items:center;justify-content:space-between;
+  padding:calc(12px + env(safe-area-inset-top)) 20px 8px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--faint)}
+.viewer .vhead button{background:none;border:0;color:var(--dim);font-size:19px;line-height:1;
+  width:38px;height:34px;cursor:pointer}
+.viewer .vstage{flex:1;position:relative;overflow:hidden;display:grid;place-items:center;touch-action:none}
+.viewer .vstage img{max-width:100%;max-height:100%;object-fit:contain;display:block;opacity:1;transition:opacity .12s;
+  transform-origin:center center;will-change:transform;
+  filter:brightness(1.06) contrast(1.04)}
+.viewer .vcap{padding:8px 22px 4px;font-size:11px;line-height:1.7;color:var(--dim);text-align:center;min-height:20px}
+.viewer .vthumbs{display:flex;gap:7px;padding:8px 20px calc(22px + env(safe-area-inset-bottom));
+  overflow-x:auto;justify-content:center}
+.viewer .vthumbs img{width:62px;height:42px;object-fit:cover;border:1px solid var(--line);
+  border-radius:2px;opacity:.45;filter:grayscale(1)}
+.viewer .vthumbs img.on{opacity:1;border-color:var(--verm);filter:none}
+.viewer .vnav{position:absolute;top:0;bottom:0;width:26%;display:grid;place-items:center;
+  color:rgba(232,226,212,.28);font-size:22px;font-family:var(--mono);user-select:none}
+.viewer .vnav.l{left:0}.viewer .vnav.r{right:0}
+.viewer .hint{position:absolute;left:0;right:0;bottom:8px;text-align:center;
+  font-family:var(--mono);font-size:7.5px;letter-spacing:.16em;color:#3c464e}
+
+/* 可点的图 */
+.split .right img,.thumbs img{cursor:zoom-in}
+.split .right::before{content:"⤢";position:absolute;right:6px;top:5px;z-index:5;
+  font-size:10px;color:rgba(232,226,212,.45);pointer-events:none}
