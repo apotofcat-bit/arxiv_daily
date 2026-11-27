@@ -300,3 +300,13 @@ details.orig p.en{font-family:var(--sans);font-size:11.2px;line-height:1.92;colo
 .split .right img,.thumbs img{cursor:zoom-in}
 .split .right::before{content:"⤢";position:absolute;right:6px;top:5px;z-index:5;
   font-size:10px;color:rgba(232,226,212,.45);pointer-events:none}
+
+/* ============ 反馈按钮 ============ */
+.fbrow{display:flex;align-items:center;gap:8px;padding:8px var(--pad) 0}
+.fb{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;color:var(--dim);
+  background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:8px 12px;cursor:pointer}
+.fb:active{background:#1d1e22}
+.fb.on{color:#1a1210;background:var(--verm);border-color:var(--verm)}
+.fb.on.dn{background:#4a4f56;border-color:#4a4f56;color:#e8e2d4}
+.fbst{font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;color:var(--faint);margin-left:auto}
+.en .fb-m{font-size:9px;margin-left:5px}

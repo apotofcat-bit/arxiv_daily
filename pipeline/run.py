@@ -102,34 +102,22 @@ def de_tex(t):
 # ---------------------------------------------------------------- 1. RSS
 def fetch_rss(cfg, date: str):
     """抓当日 RSS，返回条目列表。结果缓存在 state/rss-<date>.xml"""
-    cache = STATE / f"rss-{date}.xml"
-    if cache.exists():
-        raw = cache.read_bytes()
-        print(f"  RSS 缓存命中 ({len(raw)/1024:.0f} KB)")
-    else:
-        print(f"  拉取 {cfg['arxiv']['rss']}")
-        raw = get(cfg["arxiv"]["rss"])
-        cache.write_bytes(raw)
-    root = ET.fromstring(raw)
+    feeds = cfg["arxiv"]["rss"]
+    if isinstance(feeds, str):
+        feeds = [feeds]
+
     items = []
-    for it in root.findall(".//item"):
-        link = (it.findtext("link") or "").strip()
-        aid = link.rstrip("/").split("/")[-1]
-        desc = it.findtext("description") or ""
-        abstract = re.sub(r"^.*?Abstract:\s*", "", desc, flags=re.S)
-        abstract = html.unescape(re.sub(r"<[^>]+>", " ", abstract))
-        abstract = re.sub(r"\s+", " ", abstract).strip()
-        title = re.sub(r"\s+", " ", (it.findtext("title") or "")).strip()
-        if not aid or not title:
-            continue
-        items.append({
-            "id": aid,
-            "title": title,
-            "abstract": abstract,
-            "abstract_clean": de_tex(abstract),
-            "link": f"https://arxiv.org/abs/{aid}",
-            "announced": date,
-        })
+    for feed in feeds:
+        slug = re.sub(r"[^a-z.]", "", feed.rsplit("/", 1)[-1].lower()) or "feed"
+        cache = STATE / f"rss-{date}-{slug}.xml"
+        if cache.exists():
+            raw = cache.read_bytes()
+            print(f"  [{slug}] 缓存命中 ({len(raw)/1024:.0f} KB)")
+        else:
+            print(f"  [{slug}] 拉取 {feed}")
+            raw = get(feed)
+            cache.write_bytes(raw)
+        items.extend(parse_feed(raw, date))
     # 去重（cross-list 会重复）
     seen, uniq = set(), []
     for x in items:
@@ -141,8 +129,86 @@ def fetch_rss(cfg, date: str):
     return uniq
 
 
+def parse_feed(raw: bytes, date: str):
+    root = ET.fromstring(raw)
+    out = []
+    for it in root.findall(".//item"):
+        link = (it.findtext("link") or "").strip()
+        aid = link.rstrip("/").split("/")[-1]
+        desc = it.findtext("description") or ""
+        abstract = re.sub(r"^.*?Abstract:\s*", "", desc, flags=re.S)
+        abstract = html.unescape(re.sub(r"<[^>]+>", " ", abstract))
+        abstract = re.sub(r"\s+", " ", abstract).strip()
+        title = re.sub(r"\s+", " ", (it.findtext("title") or "")).strip()
+        if not aid or not title:
+            continue
+        out.append({
+            "id": aid,
+            "title": title,
+            "abstract": abstract,
+            "abstract_clean": de_tex(abstract),
+            "link": f"https://arxiv.org/abs/{aid}",
+            "announced": date,
+        })
+    return out
+
+
+
+# ---------------------------------------------------------------- 反馈向量
+FB_FILE = HERE / "feedback.json"
+_STOP = set("""a an the of in on at to for from with by as is are was were be been being and or
+not no we our this that these those it its their they them which who whom what when where while
+than then such can may might will would could should do does did have has had also more most
+using used use we our show shows shown find finds found present presented we""".split())
+
+
+def _tokens(text: str):
+    return [w for w in re.findall(r"[a-z][a-z\-]{2,}", (text or "").lower()) if w not in _STOP]
+
+
+def build_feedback_weights():
+    """从 feedback.json 学一个词权重：喜欢的论文里出现的词加权，不喜欢的减权。
+    返回 {word: weight}，没有文件就返回空字典。"""
+    if not FB_FILE.exists():
+        return {}
+    try:
+        d = json.loads(FB_FILE.read_text(encoding="utf-8"))
+    except Exception:
+        print("  feedback.json 解析失败，忽略")
+        return {}
+
+    def counter(items):
+        c = {}
+        for it in items or []:
+            if isinstance(it, str):
+                continue
+            for w in set(_tokens(it.get("title", "")) + _tokens(it.get("abstract", ""))):
+                c[w] = c.get(w, 0) + 1
+        return c
+
+    liked = counter(d.get("liked"))
+    disliked = counter(d.get("disliked"))
+    nL = max(len(d.get("liked") or []), 1)
+    nD = max(len(d.get("disliked") or []), 1)
+    w = {}
+    for k, v in liked.items():
+        w[k] = w.get(k, 0) + v / nL
+    for k, v in disliked.items():
+        w[k] = w.get(k, 0) - v / nD
+    return {k: v for k, v in w.items() if abs(v) > 0.001}
+
+
+def feedback_score(item, weights):
+    if not weights:
+        return 0.0
+    toks = set(_tokens(item["title"]) + _tokens(item["abstract"]))
+    if not toks:
+        return 0.0
+    return sum(weights.get(t, 0.0) for t in toks) / (len(toks) ** 0.5)
+
+
 # ---------------------------------------------------------------- 2. 排序
-def score_item(item, cfg) -> float:
+def score_item(item, cfg, fbw=None) -> float:
     """存在性打分：一个关键词出现多次不重复计分，避免长摘要刷分。
     标题命中 ×2.4，摘要命中 ×1.0，排除词 ×(-6)。
     """
@@ -156,11 +222,13 @@ def score_item(item, cfg) -> float:
     for ex in cfg["interest"].get("exclude", []):
         if ex.lower() in txt:
             s -= 6.0
+    # 反馈向量：+2.5 倍权重，喜欢/不喜欢各自累积
+    s += 2.5 * feedback_score(item, fbw or {})
     return s
 
 
-def select(items, cfg):
-    scored = sorted(((score_item(i, cfg), i) for i in items), key=lambda x: -x[0])
+def select(items, cfg, fbw=None):
+    scored = sorted(((score_item(i, cfg, fbw), i) for i in items), key=lambda x: -x[0])
     pre = cfg["select"]["prefilter_n"]
     top = cfg["select"]["top_n"]
     cand = [x[1] for x in scored[:pre] if x[0] > 0]
@@ -480,7 +548,11 @@ def main():
 
     # 2
     print("· 相关性排序")
-    picked, n_match, n_all = select(items, cfg)
+    fbw = build_feedback_weights()
+    if fbw:
+        print(f"  反馈向量：{len(fbw)} 个词（来自 feedback.json）")
+    picked, n_match, n_all = select(items, cfg, fbw)
+    n_matched = max(n_match, len(picked))
     print(f"  候选 {n_match} 篇，选中 {len(picked)} 篇:")
     for i, p in enumerate(picked, 1):
         print(f"   {i}. {p['id']}  {p['title'][:70]}")

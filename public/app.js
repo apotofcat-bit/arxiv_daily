@@ -19,6 +19,7 @@ const el = (tag, cls, txt) => {
 };
 
 const NOTES_KEY = 'amadeus.notes.v1';
+const FB_KEY = 'amadeus.feedback.v1';
 let BASE = '';                 // '' = 包内快照；否则为远程前缀
 const REMOTE_TIMEOUT = 4000;
 
@@ -54,6 +55,18 @@ function setNote(id, text) {
   if (text && text.trim()) all[id] = { text, updated: Date.now() };
   else delete all[id];
   return writeNotes(all);
+}
+
+/* ---------------- 反馈 ---------------- */
+function loadFb() {
+  try { return JSON.parse(localStorage.getItem(FB_KEY) || '{}') || {}; } catch (e) { return {}; }
+}
+function setFb(id, vote, meta) {
+  const all = loadFb();
+  if (all[id] && all[id].vote === vote) delete all[id];
+  else all[id] = { vote, at: Date.now(), title: (meta && meta.title) || '', abstract: (meta && meta.abs) || '' };
+  try { localStorage.setItem(FB_KEY, JSON.stringify(all)); } catch (e) {}
+  return all;
 }
 
 /* ---------------- 数据 ---------------- */
@@ -189,6 +202,8 @@ function renderList() {
     tx.appendChild(el('div', 'vd', p.verdict || ''));
     const meta = el('div', 'm', `${p.id} · ${p.mood || ''}`);
     if (notes[p.id]) meta.appendChild(el('span', 'mark', '✎'));
+    const fbv = (loadFb()[p.id] || {}).vote;
+    if (fbv) meta.appendChild(el('span', 'fb-m', fbv === 1 ? '▲' : '▼'));
     tx.appendChild(meta);
 
     a.appendChild(th); a.appendChild(tx);
@@ -271,6 +286,18 @@ async function showDetail(date, id) {
     }, 500);
   };
   $('dNoteStatus').textContent = ta.value.trim() ? '已保存' : '—';
+
+  const fb = loadFb();
+  const fbUp = $('fbUp'), fbDown = $('fbDown'), fbSt = $('fbStatus');
+  const paintFb = (v) => {
+    fbUp.className = 'fb' + (v === 1 ? ' on' : '');
+    fbDown.className = 'fb' + (v === -1 ? ' on dn' : '');
+    fbSt.textContent = v === 1 ? '已标记有用' : v === -1 ? '已标记不感兴趣' : '';
+  };
+  paintFb((fb[p.id] || {}).vote);
+  const meta = { title: p.title_en, abs: (p.abstract_en || '').slice(0, 1200) };
+  fbUp.onclick = () => { const a = setFb(p.id, 1, meta); paintFb((a[p.id] || {}).vote); syncFbJson(); };
+  fbDown.onclick = () => { const a = setFb(p.id, -1, meta); paintFb((a[p.id] || {}).vote); syncFbJson(); };
 
   $('dMood').textContent = p.mood || 'neutral';
   initLive2D(p.mood);
@@ -416,13 +443,32 @@ function renderCal() {
     + (days.length ? ` 最早 ${days[days.length - 1]}，最新 ${days[0]}。` : '');
 }
 
+/* 生成 pipeline/feedback.json 的内容，方便粘贴回仓库 */
+function feedbackForPipeline() {
+  const fb = loadFb();
+  const out = { liked: [], disliked: [] };
+  Object.entries(fb).forEach(([id, v]) => {
+    const rec = { id, title: v.title || '', abstract: v.abstract || '' };
+    (v.vote === 1 ? out.liked : out.disliked).push(rec);
+  });
+  return out;
+}
+function syncFbJson() {
+  // 有反馈时把结果挂到 window，导出按钮会带上
+  window.__fbJson = JSON.stringify(feedbackForPipeline(), null, 2);
+}
+
 /* ---------------- 导入导出 ---------------- */
 function bindIO() {
   const box = $('ioBox');
   const st = $('ioStatus');
 
   $('btnExport').onclick = async () => {
-    const payload = JSON.stringify({ version: 1, exported: new Date().toISOString(), notes: loadNotes() }, null, 2);
+    const payload = JSON.stringify({
+      version: 1, exported: new Date().toISOString(),
+      notes: loadNotes(),
+      feedback: feedbackForPipeline(),
+    }, null, 2);
     try {
       await navigator.clipboard.writeText(payload);
       st.textContent = '已复制到剪贴板（' + Object.keys(loadNotes()).length + ' 条）';
