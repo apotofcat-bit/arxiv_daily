@@ -107,6 +107,7 @@ def fetch_rss(cfg, date: str):
         feeds = [feeds]
 
     items = []
+    feed_dates = []
     for feed in feeds:
         slug = re.sub(r"[^a-z.]", "", feed.rsplit("/", 1)[-1].lower()) or "feed"
         cache = STATE / f"rss-{date}-{slug}.xml"
@@ -117,7 +118,10 @@ def fetch_rss(cfg, date: str):
             print(f"  [{slug}] 拉取 {feed}")
             raw = get(feed)
             cache.write_bytes(raw)
-        items.extend(parse_feed(raw, date))
+        got, fdate = parse_feed(raw, date)
+        items.extend(got)
+        if fdate:
+            feed_dates.append(fdate)
     # 去重（cross-list 会重复）
     seen, uniq = set(), []
     for x in items:
@@ -126,11 +130,16 @@ def fetch_rss(cfg, date: str):
         seen.add(x["id"])
         uniq.append(x)
     print(f"  解析到 {len(items)} 条，去重后 {len(uniq)} 条")
-    return uniq
+    # 多个 feed 取最新的公告日期
+    feed_date = max(feed_dates) if feed_dates else date
+    return uniq, feed_date
 
 
 def parse_feed(raw: bytes, date: str):
+    """返回 (items, pubDate)。pubDate 是 arXiv 的公告日期，用它当日文件名最准。"""
     root = ET.fromstring(raw)
+    ch = root.find("channel")
+    pub = (ch.findtext("pubDate") if ch is not None else "") or ""
     out = []
     for it in root.findall(".//item"):
         link = (it.findtext("link") or "").strip()
@@ -150,7 +159,20 @@ def parse_feed(raw: bytes, date: str):
             "link": f"https://arxiv.org/abs/{aid}",
             "announced": date,
         })
-    return out
+    return out, _parse_pubdate(pub)
+
+
+def _parse_pubdate(pub: str) -> str:
+    """'Thu, 26 Nov 2026 00:00:00 -0500' -> '2026-11-26'"""
+    m = re.search(r"(\d{1,2})\s+([A-Za-z]{3})\s+(\d{4})", pub or "")
+    if not m:
+        return ""
+    months = {mm: i for i, mm in enumerate(
+        "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(), 1)}
+    try:
+        return f"{int(m.group(3)):04d}-{months[m.group(2)[:3].title()]:02d}-{int(m.group(1)):02d}"
+    except KeyError:
+        return ""
 
 
 
@@ -420,7 +442,7 @@ def build_greeting(cards, scanned, matched):
     )
 
 
-def assemble(date, items, picked, cards, usages, cfg, matched_hint=None):
+def assemble(date, items, picked, cards, usages, cfg, matched_hint=None, batch=None):
     papers = []
     for item in picked:
         c = cards.get(item["id"])
@@ -449,6 +471,7 @@ def assemble(date, items, picked, cards, usages, cfg, matched_hint=None):
 
     day = {
         "date": date,
+        "batch": batch or "",
         "label": datetime.strptime(date, "%Y-%m-%d").strftime("%m.%d %a").upper(),
         "scanned": len(items),
         "matched": matched_hint if matched_hint else len(picked),
@@ -535,6 +558,7 @@ def main():
     ap.add_argument("--assemble", action="store_true", help="只用已有 cards 文件组装，不调 LLM")
     ap.add_argument("--dry-run", action="store_true", help="只抓取与排序")
     ap.add_argument("--no-push", action="store_true")
+    ap.add_argument("--force", action="store_true", help="同日已有数据也强制重跑")
     ap.add_argument("--prune-days", type=int, default=60, help="图片只保留最近 N 天")
     args = ap.parse_args()
 
@@ -544,7 +568,40 @@ def main():
 
     # 1
     print("· 抓取 RSS")
-    items = fetch_rss(cfg, date)
+    items, feed_date = fetch_rss(cfg, date)
+    if feed_date and feed_date != date:
+        print(f"  公告日期 {feed_date}（运行日 {date}），按公告日期命名")
+        date = feed_date
+    elif feed_date:
+        print(f"  公告日期 {date}")
+
+    batch = hashlib.sha1("\n".join(sorted(i["id"] for i in items)).encode()).hexdigest()[:12]
+
+    # 主判据：这个公告日期是否已经出过片。
+    # 周末、美国假期 arXiv 不更新，feed 的 pubDate 不变，就会命中这条，不会重复出「新的一天」。
+    if (DATA / f"{date}.json").exists() and not args.force:
+        print(f"  {date} 已经生成过，跳过。（--force 可强制重跑）")
+        return
+
+    idx_path = DATA / "index.json"
+    if idx_path.exists():
+        idx = json.loads(idx_path.read_text(encoding="utf-8"))
+        prev_days = idx.get("days", [])
+        # 跨日去重：近 14 天出现过的论文不再选
+        recent = set()
+        for d in prev_days[:14]:
+            f = DATA / f"{d}.json"
+            if f.exists():
+                try:
+                    for pp in json.loads(f.read_text(encoding="utf-8")).get("papers", []):
+                        recent.add(pp["id"])
+                except Exception:
+                    pass
+        if recent:
+            before = len(items)
+            items = [i for i in items if i["id"] not in recent]
+            if len(items) < before:
+                print(f"  跳过近 14 天已出现过的 {before - len(items)} 篇")
 
     # 2
     print("· 相关性排序")
@@ -647,7 +704,8 @@ def main():
         ])
 
     print("· 组装")
-    day = assemble(date, items, picked, cards, usages, cfg, matched_hint=locals().get("n_matched"))
+    day = assemble(date, items, picked, cards, usages, cfg,
+                   matched_hint=locals().get("n_matched"), batch=batch)
     prune_figures(args.prune_days, date)
 
     if not args.no_push:
