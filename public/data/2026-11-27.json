@@ -1,0 +1,119 @@
+{
+  "date": "2026-11-27",
+  "label": "11.27 FRI",
+  "scanned": 69,
+  "matched": 18,
+  "greeting": "今天 astro-ph 新到 69 篇。按你的方向留下 5 篇，选了 5 篇给你——先看第一款：<b>DESI DR1 中的物理类星体对作为 z≈2 原星系团的示踪物</b>。",
+  "papers": [
+    {
+      "id": "2611.34350",
+      "title_en": "Physical quasar pairs in DESI DR1 as tracers of protoclusters at $z\\approx2$",
+      "abstract_en": "Close pairs of quasars at the same redshift are expected to mark overdense regions that will collapse into galaxy clusters. Earlier work with SDSS found about 2800 such pairs, too few to follow their environment with separation. We build the largest sample of physical quasar pairs to date from DESI DR1 and test whether pairs out to Mpc separations trace protoclusters. We select pairs with rest-frame velocity difference | Delta V| leq900 km/s and projected separation r_p leq4~Mpc at 1.2 leq z leq2.8, measure their purity and fibre completeness, and measure the clustering of pair members around all DESI quasars. We find 40 626 physical pairs with projected separation r_p leq2.5~Mpc, where their purity falls to 50%, the effective radius of protoclusters at z≈2. Pair members are 1.69±0.14, 1.78±0.09 and 2.01±0.06 times more clustered than all quasars for projected separations r_p leq1, 1--2.5 and 2.5--4~Mpc, while chance pairs show little excess (1.08±0.05). This corresponds to haloes of ~1.4--2.2×10^13 h^-1M_⊙. Physical quasar pairs with projected separations up to 2.5~Mpc trace protocluster environments, at the level that AbacusSummit mocks predict in ΛCDM. The full DESI survey will turn them into a statistical census of protoclusters at cosmic noon.",
+      "title_zh": "DESI DR1 中的物理类星体对作为 z≈2 原星系团的示踪物",
+      "verdict": "类星体对成员成团性约为全体类星体的两倍，与 AbacusSummit 模拟一致，但环境质量仍为间接推断。",
+      "abstract_zh": "背景。同一红移上的近距离类星体对预期标记将坍缩为星系团的过密区。此前基于 SDSS 的工作找到约 2800 个此类对，数量太少，无法按分离追踪其环境。目标。我们基于 DESI DR1 构建迄今最大的物理类星体对样本，检验延伸到 Mpc 尺度的对是否示踪原星系团。方法。我们在 z≈2 选取静止系速度差与投影分离满足给定阈值的对，测量其纯度和光纤分配完备度，并测量对成员相对全部 DESI 类星体的成团性。结果。我们找到 40 626 个投影分离在给定范围内的物理对，其纯度在该分离处降至 50%，该尺度即 z≈2 原星系团的有效半径。对成员在投影分离三个区间内分别比全部类星体成团性强若干倍，而偶然对几乎没有超出。这对应一定质量范围的质量晕。结论。投影分离至 2.5 Mpc 的物理类星体对示踪原星系团环境，与 AbacusSummit ΛCDM 模拟预言一致。完整的 DESI 巡天将把它们变成宇宙正午原星系团的统计普查。",
+      "background": "原星系团是今天星系团的前身，在 z≈2 尚未维里化，有效半径可达 5–10 comoving Mpc，成员散布在多个暗物质晕中，因此以往多依赖稀有示踪物的小样本。单个类星体只标记中等过密，但两个在天空和红移上都靠近的类星体预期出现在大质量晕密度最高处；小尺度类星体对的超出早已被发现，个别系统（如类星体四重奏）位于原星系团中。MR25 用 SDSS DR16 找到 2777 个物理对，并通过对–类星体互相关和 CMB 透镜显示对比单类星体偏置更强，但信号如何随分离演化、物理关联在哪里终止，需要远多于 SDSS 的对样本。DESI DR1 提供超过百万个类星体，使这一检验成为可能；此前 DESI 相关工作多集中在 110 kpc 以内的对候选或透镜/双类星体，Mpc 尺度物理对及其环境尚待探索。",
+      "summary": [
+        "用 DESI DR1 构建迄今最大的 z≈2 物理类星体对样本，并检验其是否示踪原星系团。",
+        "以静止系速度差和投影分离选对，测纯度与光纤完备度，用 Landy–Szalay 估计器测量对成员与全部类星体的互相关。",
+        "投影分离至 2.5 Mpc 的物理对成员成团性约为全体类星体的 1.7–2.0 倍，偶然对接近无超出，与 AbacusSummit 模拟一致。"
+      ],
+      "comment": "卖点成立但不算强：核心结论是「对成员比全体类星体更成团」，这与 MR25 的方向一致，本文的主要增量是样本量（2 Mpc 内约 28 656 对，约为 SDSS 的十倍）和按分离分箱的趋势。方法上有几处值得肯定：用纯度而非拍脑袋定外边界、显式处理光纤碰撞、加入偶然对对照、并在模拟中重复同一选择与伙伴剔除。弱点也明显：环境质量完全依赖线性偏置模型加 Tinker 偏置关系反推，不是直接测量；2.5–4 Mpc 箱纯度仅 0.43，趋势的显著性有限；成团性只在 ≥2 次覆盖天区测量，样本被削减且选择函数复杂；对成员的成团性还受伙伴剔除窗口影响，拟合尺度受限。与 MR25、Jing et al. 2026 属同一脉络。值得读，但应把它当作统计示踪检验而非原星系团探测。",
+      "read_suggestion": "2.2–2.5（选对、纯度与光纤完备度）+ 3.1 + 4.1 + 5（模拟对比与偏置解释）；附录 A 的幂律拟合可略读，附录 B、C 可跳过。",
+      "mood": "neutral",
+      "figures": [
+        "figs/2611.34350/fig_examples.webp"
+      ]
+    },
+    {
+      "id": "2611.33624",
+      "title_en": "JWST Reveals Contrast Overdensities around Two ALMA-CRISTAL Galaxies at $z\\sim5.2$",
+      "abstract_en": "The distribution of stellar mass between massive galaxies and their companions traces how galaxy assembly proceeds within early large-scale structure. We investigate the environments of two galaxies from the Atacama Large Millimeter/submillimeter Array (ALMA) CRISTAL survey: CRISTAL-19 (C19; z=5.235) and CRISTAL-21 (C21; z=5.256), using F444W slitless spectroscopy from the Near-Infrared Camera (NIRCam) on the James Webb Space Telescope (JWST) in COSMOS-3D. A friends-of-friends analysis of Hα emitters identifies two distinct overdense nodes separated by approximately 25 comoving Mpc. Although C21 is the more massive galaxy, C19 has the more massive, actively star-forming companions. The companion populations around C19 and C21 have median stellar masses of log(M_ star/M_⊙)=9.43 and 8.82 and median dust-corrected Hα star formation rates of 31 and 16~M_⊙~yr^-1, respectively. Their star formation rate contrast largely reflects the difference in companion masses. C19 contains only 4.5^+0.9_-0.7% of the combined measured stellar mass of itself and its selected companions; the corresponding fraction for C21 is 39^+5_-5%. Thus, stellar mass remains more widely distributed among galaxies around C19, whereas a larger share resides in C21. Resolved interacting companions around C19 and [C II] kinematics consistent with a late-stage merger in C21 support this contrast in assembly state. These findings support the phase-dependent picture of Zou et al. (2026), in which the surrounding star-forming population changes as interactions and mergers build up a massive galaxy.",
+      "title_zh": "JWST 揭示 z~5.2 两个 ALMA-CRISTAL 星系周围的对比性过密区",
+      "verdict": "两个过密节点中，中心星系质量排序与伴星系质量排序相反，提示组装阶段不同。",
+      "abstract_zh": "大质量星系与其伴星系之间的恒星质量分布，反映了早期大尺度结构中星系组装的过程。我们利用 James Webb 空间望远镜 (JWST) 近红外相机 (NIRCam) 的 F444W 无缝光谱，在 COSMOS-3D 天区研究 ALMA CRISTAL 巡天中两个星系的环境：CRISTAL-19 (C19) 与 CRISTAL-21 (C21)。对 Hα 发射体做 friends-of-friends 分析，识别出两个彼此分离约 25 comoving Mpc 的过密节点。尽管 C21 本身质量更大，C19 的伴星系却质量更大、恒星形成更活跃。C19 与 C21 周围伴星系的中位恒星质量分别为 8.82 与 (另一值)，中位尘埃改正 Hα 恒星形成率分别为 31 与 (另一值)。恒星形成率的差异主要反映伴星系质量的差异。C19 仅占其自身与所选伴星系合计实测恒星质量的 (某比例)，C21 的对应比例为 (另一比例)。因此 C19 周围的恒星质量分布更分散，而 C21 的质量更多集中于自身。C19 周围分辨出的相互作用伴星系，以及 C21 中与晚期并合相符的 [C II] 运动学，支持这种组装状态的对比。这些结果支持 Zou 等人的阶段依赖图像。",
+      "background": "大质量星系如何在大尺度结构中组装，是理解早期星系形成的关键问题之一。ALMA 的 CRISTAL 与 ALPINE 巡天已分辨出 z~5 星系的旋转盘、团块与并合结构，ALPINE–CRISTAL–JWST 联合项目进一步在千秒差距尺度上刻画尘埃、金属丰度与星际介质；但这些观测主要针对星系内部及近邻气体，未覆盖更宽的环境。此前 Zou 等人用 COSMOS-3D 的 NIRCam 无缝光谱研究了 18 个 z~4.5–7.2 的大质量尘埃星系，发现相互作用系统周围 Hα 发射体过剩最强，并提出阶段依赖的图像，但该工作只统计伴星系数目，未比较质量与恒星形成率，因而无法判断质量究竟积累在中心星系还是周围星系中。本文正是要补上这一环。",
+      "summary": [
+        "用 NIRCam F444W 无缝光谱在 COSMOS-3D 中搜寻 C19 与 C21 周围的 Hα 伴星系，并做 FoF 分组与过密度制图。",
+        "对伴星系做多波段 SED 拟合 (CIGALE 与 BAGPIPES，各三种 SFH)，比较恒星质量、尘埃改正 Hα 恒星形成率与质量占比。",
+        "两节点相距约 25 cMpc；C19 伴星系质量与恒星形成率更高，C19 自身仅占合计质量的 (某比例)，C21 则占 (另一比例)，与 C21 的晚期并合迹象一致。"
+      ],
+      "comment": "卖点是把「伴星系计数过剩」推进到「质量分布对比」，思路清楚，六种 SED 配置下排序一致，稳健性做得比较扎实。但样本只有两个节点、每个节点 8–11 个成员，统计上无法区分「真实物理差异」与「单个节点的偶然性」；两种密度估计在 C19 的点估计更高但误差区间重叠，作者自己也承认未建立显著差异。质量占比依赖所选伴星系样本与缺失的质量估计，且 SMHM 求和得到的 halo 质量与 z=0 后代轨迹是条件性外推，不宜当作预言。与 Zou 等人 (2025) 同一挂，属于该系列的环境篇。值得读，但应把它当作个例研究而非统计结论。",
+      "read_suggestion": "III.1 + III.2.1 + III.3 + IV.1；III.2.2–III.2.3 可略读，附录 A、C 可跳过，附录 B 的 Table B1 值得看一眼。",
+      "mood": "neutral",
+      "figures": [
+        "figs/2611.33624/C19_C21_combined_source_panels.webp",
+        "figs/2611.33624/fof_3d.webp",
+        "figs/2611.33624/overdensity_maps.webp"
+      ]
+    },
+    {
+      "id": "2611.33798",
+      "title_en": "Less massive black holes in faint hosts: SED fitting of Little Red Dots within the Black Hole Star scenario",
+      "abstract_en": "The James Webb Space Telescope (JWST) has revealed a population of compact sources known as ``little red dots'' (LRDs), characterized by a distinctive V-shaped spectral energy distribution (SED) from UV to optical wavelengths. The physical nature of these sources remains debated. The ``black hole star'' (BH*) scenario, wherein a super-Eddington accreting black hole is embedded in a dense gaseous envelope, has been proposed to explain them. We assemble a sample of 22 LRDs at 4.0 ≲ z ≲ 9.5 from the ASTRODEEP-JWST database. We construct a composite ``host galaxy + BH*'' model using the textttCloudy photoionization code, and perform SED fitting with textscBayeSED3. Our modeling reproduces the observed V-shaped features: the UV continuum blueward of the Balmer break is well reproduced by stellar emission within this decomposition, while the optical regime is dominated by the BH* component. Our fits reveal that LRDs are black holes hosted by faint, low-mass galaxies with median stellar and black hole masses of M_* = 10^8.7 M_⊙ and M_ rm BH = 10^6.4 M_⊙, respectively. These black holes are moderately overmassive relative to local scaling relations but less extreme than broad-line estimates. The median bolometric luminosity L_ rm BH^* ~ 10^44.9 rm erg s^-1 mitigates the reported number density tension from 1--2 orders of magnitude to a factor of a few. The host galaxies lie near the high-redshift star-forming main sequence, and stellar extinction correlates positively with star formation rate (SFR). The BH* scenario provides a self-consistent paradigm for LRDs, offering insights into the rapid growth of supermassive black hole seeds and their co-evolution with host galaxies during the cosmic dawn.",
+      "title_zh": "暗弱宿主中的较轻黑洞：黑洞星框架下小红点的 SED 拟合",
+      "verdict": "BH* 双成分拟合能复现 V 形 SED，但黑洞质量强依赖假设的 Eddington 比值。",
+      "abstract_zh": "JWST 揭示了一类致密源「小红点」(LRDs)，其从紫外到光学的 SED 呈独特的 V 形，物理本质仍有争议。黑洞星 (BH*) 情景认为，一个超 Eddington 吸积的黑洞被致密气体包层包裹，可解释这类源。我们从 ASTRODEEP-JWST 数据库汇编了 22 个 LRDs 样本，用 Cloudy 光致电离代码构建「宿主星系 + BH*」复合模型，并用 BayeSED3 做 SED 拟合。模型复现了观测到的 V 形特征：Balmer break 蓝端的紫外连续谱在这一分解下由恒星辐射很好地再现，而光学波段由 BH* 成分主导。拟合显示 LRDs 是位于暗弱、低质量星系中的黑洞，恒星质量与黑洞质量中位数分别为 [MATH] 和 [MATH]。这些黑洞相对本地标度关系属于中等程度过重，但不如宽线估计那样极端。中位热光度 [MATH] 把此前报道的数密度矛盾从 1–2 个量级缓解到数倍。宿主星系位于高红移恒星形成主序附近，恒星消光与 SFR 正相关。BH* 情景为 LRDs 提供了一个自洽的图像，有助于理解超大质量黑洞种子的快速成长及其在宇宙黎明时期与宿主的协同演化。",
+      "background": "LRDs 的 V 形 SED 长期缺乏统一解释。早期主流看法是强尘埃红化的 AGN，但 MIRI 未探测到预期的红外再辐射、Balmer break 强度难以用演化星族连续谱解释、以及宽线给出的黑洞质量相对宿主异常过重，这三点使该解释受挫。Inayoshi & Maiolino 提出致密中性气体团块可产生 Balmer break 与吸收；Naidu et al. 进一步提出 BH* 模型，用超 Eddington 吸积黑洞外包裹无尘致密气体大气来解释 break、宽线轮廓与紫外暗弱。此前工作多为单源或定性讨论，缺少在 BH* 框架下对多样本的定量多波段 SED 拟合，本文即填补这一空白。",
+      "summary": [
+        "对 22 个 z~4–9 的 LRDs 做「宿主星系 + BH*」复合模型 SED 拟合。",
+        "用 Cloudy 构建 BH* 包层光谱，BayeSED3 做贝叶斯推断，并做 mock 参数回收检验。",
+        "紫外由恒星主导、光学由 BH* 主导；黑洞质量中位约 10^7 太阳质量，比宽线估计低 1–2 个量级。"
+      ],
+      "comment": "思路清晰，把 BH* 从单源故事推到样本层面，mock 回收检验也算诚实。但核心弱点在黑洞质量：M_BH 由 L_bol 除以假设的 Eddington 比值 λ=3 得到，λ 本身不确定，质量标度几乎完全由这一假设决定，文中并未给出 λ 变化的系统误差。其次，样本仅 22 个、全部来自 PRISM 低分辨率光谱，且模型为静态全覆盖球对称 Cloudy 网格，无法处理包层泄漏与多成分紫外，作者自己也承认会把 M* 和 SFR 偏高。与 Naidu et al. 2024、Kocevski et al. 的宽线结果属同一争论脉络，可作为 BH* 阵营的定量参考，但不宜当作黑洞质量的独立测量。",
+      "read_suggestion": "III.3 + IV.2 + V.2，附录 A 可跳过",
+      "mood": "neutral",
+      "figures": [
+        "figs/2611.33798/JADES-GN-10395-spec-phot.webp",
+        "figs/2611.33798/stellar_bhmass_fig_with_comparison.webp",
+        "figs/2611.33798/SFR_Mstar_mainsequence_witherr.webp"
+      ]
+    },
+    {
+      "id": "2611.34743",
+      "title_en": "Black holes in little red and blue dots drive no superwinds in the first 1.5 billion years",
+      "abstract_en": "Galaxy-formation models rely on accreting black holes to expel gas from their hosts. We test this prediction in 67 little red dots (LRDs) and little blue dots (LBDs) in the first 1.5 billion years, selected from 80,367 NIRSpec spectra in the DAWN JWST Archive. We detect no [O III] wind, against lower limits of 7.2 and 7.5 expected detections for local sub-Eddington and super-Eddington active nuclei. For winds narrower than 1,500 km/s, the corresponding incidence limits are 13% and 19% at 95% confidence, compared with 31% and 49% locally. Broad Balmer lines are centred on the narrow lines, and Balmer absorbers move below 8% of the escape speed. Published super-Eddington fountain, black-hole-star and quasi-star models each fail a measured property of the spectra. LRDs and LBDs drive no superwinds, and their black holes grow without the wind feedback invoked to regulate galaxies.",
+      "title_zh": "小红点与蓝点中的黑洞在前15亿年不驱动超级风",
+      "verdict": "67个LRD/LBD中未探测到[O III]风，超爱丁顿模型的三种能量耗散路径均与光谱不符",
+      "abstract_zh": "星系形成模型依赖吸积黑洞将气体驱出宿主星系。我们在前15亿年内、选自DAWN JWST Archive的80,367条NIRSpec光谱中的67个小红色点(LRD)和小蓝色点(LBD)中检验这一预言。我们未探测到[O III]风，而按本地亚爱丁顿与超爱丁顿活动核预期应分别有7.2与7.5个探测。对于窄于1,500 km/s的风，95%置信度下的发生率上限为13%与19%，本地对应值为31%与49%。宽Balmer线以窄线为中心，Balmer吸收体速度低于逃逸速度的8%。已发表的超爱丁顿喷泉、黑洞星与准星模型各自与光谱的某一实测性质不符。LRD与LBD不驱动超级风，其黑洞在没有风反馈的情况下增长。",
+      "background": "黑洞反馈是星系形成模型限制星系质量、终止恒星形成的核心机制：接近爱丁顿极限时辐射驱动超级风，低吸积率时喷流加热晕。JWST发现的小红点在这一框架下构成挑战——其维里黑洞质量高于本地黑洞-恒星质量关系，却X射线与射电偏弱、缺乏高电离紫外线。超爱丁顿模型用内禀X射线弱、宽线高估黑洞质量、稠密气体再处理来解释，并预言强风（辐射磁流体模拟给出约30%吸积质量以千公里每秒量级外流）。但也有休眠超质量黑洞与动力学质量高于维里的替代解释。风运动学因此成为直接判据，此前尚缺乏对LRD群体的系统性风统计检验。",
+      "summary": [
+        "在67个LRD/LBD的NIRSpec光栅光谱中系统搜索[O III]风，并用注入-恢复方法标定探测率。",
+        "三条独立诊断：[O III]蓝翼、宽Balmer线质心与额外成分、Balmer吸收体速度；与本地AGN及已发表模型谱对比。",
+        "未探测到风，发生率上限13%/19%；宽线对称、吸收体束缚；喷泉、黑洞星、准星模型均与数据冲突。"
+      ],
+      "comment": "卖点成立且做得扎实：注入-恢复把「没看到」变成有标定的上限，三条诊断互相独立，还逐一复测了已发表模型谱，这是本文最有分量的部分。弱点也明显：结论依赖67个源、且仅限有光栅[O III]的亮源，宽于1,500 km/s的风无法排除；热、中性、分子外流完全未覆盖；对GLIMPSED-329380的再分析只是单源重解释，说服力有限。与Maiolino等从X射线弱推断「无反馈」的工作一脉相承，但本文直接测风。值得读，尤其是方法节的注入统计。",
+      "read_suggestion": "Results前两小节（[O III]风与注入-恢复）+ Discussion；Methods中注入-恢复与本地样本定义必看，Extended Data可略读",
+      "mood": "impressed",
+      "figures": []
+    },
+    {
+      "id": "2611.34802",
+      "title_en": "Tipping the scales in Blue Jay: Dust energy balance overpredicts IR luminosity in galaxies at $z\\sim2$",
+      "abstract_en": "The spectral energy distribution (SED) of a galaxy encodes vital information about its chemical composition, stellar populations, and dust content. To model the infrared emission, many modern SED-fitting codes rely on dust energy balance, which assumes that all energy absorbed by dust in the UV-optical is equal to the energy emitted by dust in the infrared regime. However, few studies have been carried out to test the validity of this assumption at high redshift, where direct infrared observations are sparse. In this work, we perform aperture photometry in 111 galaxies from the Blue Jay survey (1.7 < z < 3.5) using public JWST/MIRI observations from the PRIMER, COSMOS-Web and COSMOS-3D surveys. Focusing on a subsample of 89 star-forming galaxies, we reconstruct best-fit SED model spectra from Prospector using only HST and NIRCam photometry and compare the predicted mid-infrared fluxes to the measured MIRI photometry. We find that mid-infrared fluxes are systematically overpredicted by about 10% at 7.7μm up to a factor of ~3 at 21μm. The discrepancy increases with inferred dust attenuation, indicating that dust energy balance suffers from line-of-sight effects in systems with complex dust geometries. We find that adding NIRSpec spectroscopy to the fits breaks parameter degeneracies and strongly reduces the overprediction. When fitting the measured MIRI photometry together with the HST and NIRCam data, the best-fit model spectra of dusty galaxies (A_V≳1) result in significantly lower infrared luminosities by -0.6 dex compared to best-fit spectra obtained without MIRI, consistent with steeper, SMC-like attenuation curves or complex star-dust geometries. Our study highlights the limitations of dust energy balance at high redshift and underlines the importance of direct observations for accurately recovering the ISM and dust properties of galaxies at cosmic noon.",
+      "title_zh": "蓝松鸦样本中尘埃能量平衡高估 z∼2 星系的红外光度",
+      "verdict": "用 MIRI 直接检验发现，尘埃能量平衡在重遮蔽星系中系统性高估中红外流量与总红外光度。",
+      "abstract_zh": "星系的光谱能量分布 (SED) 编码了化学组成、星族与尘埃含量的关键信息。为模拟红外辐射，许多现代 SED 拟合程序依赖尘埃能量平衡，即假设尘埃在紫外-光学吸收的能量等于其在红外再发射的能量。然而在高红移，直接红外观测稀少，这一假设鲜有检验。本文对 Blue Jay 巡天中 111 个星系（z∼2）利用 PRIMER、COSMOS-Web 与 COSMOS-3D 的公开 JWST/MIRI 观测做孔径测光。我们聚焦 89 个恒星形成星系子样本，仅用 HST 与 NIRCam 测光，通过 Prospector 重建最佳拟合 SED 模型谱，并将预测的中红外流量与实测 MIRI 测光比较。我们发现中红外流量被系统性高估：7.7 μm 处约 10%，到 21 μm 处可达一个量级。差异随推断的尘埃衰减增大，表明尘埃能量平衡在具有复杂尘埃几何的系统中受视线效应影响。加入 NIRSpec 光谱可打破参数简并，显著减小高估。将实测 MIRI 测光与 HST、NIRCam 数据联合拟合时，尘埃星系（A_V>1）的最佳拟合模型谱给出的红外光度比不含 MIRI 的拟合低 0.6 dex，与更陡的 SMC 型衰减曲线或复杂星-尘几何一致。本研究凸显了高红移下尘埃能量平衡的局限，并强调直接观测对准确恢复宇宙正午星系 ISM 与尘埃性质的重要性。",
+      "background": "宇宙正午 (z∼2) 是恒星形成率密度与尘埃遮蔽恒星形成的峰值期，理解该时期星系的尘埃性质至关重要。由于完整多波段采样稀少，Cigale、Magphys、Prospector 等主流 SED 拟合框架普遍采用尘埃能量平衡假设，从而仅凭静止系紫外-光学拟合即可外推红外光度与 SFR。但该假设存在已知隐患：沿单一视线的星光衰减无法可靠约束全局各向同性的尘埃发射，尤其在结构不对称或高倾角系统中；尘埃几何与尘埃粒径分布又难以对大样本统一参数化。高红移处直接红外观测长期匮乏，这一假设此前几乎未经系统检验。JWST/MIRI 使宇宙正午中等恒星形成星系的静止系中红外尘埃发射首次可测，本文正是在这一缺口上做直接检验。",
+      "summary": [
+        "对 Blue Jay 89 个 z∼2 恒星形成星系做 MIRI 四波段孔径测光，并公开测光星表与流程。",
+        "仅用 HST+NIRCam 测光做 Prospector 拟合，将能量平衡预测的 MIRI 流量与实测比较。",
+        "中红外流量被系统性高估，7.7 μm 约 10%、21 μm 达一个量级，且随 A_V 增强；加入 MIRI 后尘埃星系 L_IR 降低 0.6 dex。"
+      ],
+      "comment": "卖点成立且干净：用纯外推的预测去撞实测 MIRI，逻辑闭环，A_V 依赖的趋势也自洽。但样本仅 89 个、四波段且长波端信噪比有限，F1800W/F2100W 的模型误差已接近先验宽度，定量结论的稳健性受制于测光而非统计。3.3 节因孔径 PSF 修正偏差对全部流量乘 1.182 的标定，虽是诚实处理，却把系统误差转嫁到结论上，读者需留意。与 Maheson et al. (2025) 的倾角分析同属 Blue Jay 系列，可对照读。对依赖能量平衡推 SFR_IR 的人值得一读，但不宜当作普适定论。",
+      "read_suggestion": "III.3 + IV.2 + IV.3 + IV.6，附录 B、D 可跳过",
+      "mood": "neutral",
+      "figures": [
+        "figs/2611.34802/bluejay_sample_zspec_errors.webp",
+        "figs/2611.34802/10054_bkg.webp",
+        "figs/2611.34802/phot_comp.webp"
+      ]
+    }
+  ],
+  "usage": {
+    "input": 53570,
+    "output": 4464,
+    "total": 58034
+  },
+  "model": "deepseek-chat"
+}
