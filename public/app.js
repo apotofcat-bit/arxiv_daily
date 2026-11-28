@@ -632,6 +632,7 @@ function bindSettings() {
       $('cfgStatus').textContent = '远程不可达（本地模式不受影响）';
     }
   };
+  $('btnSelfTest').onclick = () => runSelfTest();
   $('btnGen').onclick = () => startGenerate();
   $('btnClear').onclick = async () => {
     if (!confirm('会删掉本机生成的所有日报和图片，确定？')) return;
@@ -677,6 +678,62 @@ async function startGenerate() {
     $('genClose').disabled = false;
     $('genClose').textContent = '关闭';
   }
+}
+
+
+/* ---------------- 自检 ---------------- */
+async function runSelfTest() {
+  const box = $('selfTestOut');
+  box.hidden = false;
+  box.innerHTML = '';
+  const line = (txt, cls) => {
+    const d = document.createElement('div');
+    if (cls) d.className = cls;
+    d.textContent = txt;
+    box.appendChild(d);
+  };
+  const t0 = Date.now();
+  const cfg = LocalEngine.getCfg();
+
+  // ① 存储
+  line('· IndexedDB');
+  try {
+    await LocalEngine.saveCfg(cfg);
+    const days = await LocalEngine.listDays();
+    line(`  ✓ 可读写（已有 ${days.length} 天）`, 'ok');
+  } catch (e) { line('  ✗ ' + e.message, 'bad'); }
+
+  // ② 原生桥
+  line('· 原生 HTTP 桥');
+  try {
+    const r = await LocalEngine.req('GET', 'https://rss.arxiv.org/rss/astro-ph.GA');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const kb = Math.round(atob(r.base64).length / 1024);
+    line(`  ✓ 抓到 ${kb} KB`, 'ok');
+  } catch (e) { line('  ✗ ' + e.message, 'bad'); }
+
+  // ③ 模型
+  line('· 模型接口');
+  try {
+    if (!cfg.apiKey) throw new Error('还没填 API key');
+    const r = await LocalEngine.req('POST', cfg.baseUrl.replace(/\/$/, '') + '/chat/completions', {
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + cfg.apiKey },
+      body: JSON.stringify({
+        model: cfg.model,
+        messages: [{ role: 'user', content: 'ping' }],
+        max_tokens: 1,
+      }),
+    });
+    if (!r.ok) {
+      let msg = 'HTTP ' + r.status;
+      try { msg += ' ' + atob(r.base64).slice(0, 180); } catch (e) {}
+      throw new Error(msg);
+    }
+    line('  ✓ 模型可用', 'ok');
+  } catch (e) { line('  ✗ ' + e.message, 'bad'); }
+
+  line('');
+  line(`用时 ${((Date.now() - t0) / 1000).toFixed(1)}s`);
 }
 
 /* ---------------- 图片查看器 ---------------- */

@@ -510,6 +510,7 @@ async function clearAll() {
 
 window.LocalEngine = {
   loadCfg, saveCfg, hasKey, getCfg: () => CFG,
+  req: nativeReq,
   runDaily, listDays, getDay, figureURL, usageStats, clearAll,
   estimateTokens: ntok,
 };
