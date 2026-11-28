@@ -239,10 +239,14 @@
           <div class="cats" id="cfgCats"></div>
           <input id="cfgCatCustom" type="text" spellcheck="false" placeholder="其它分类用逗号分隔，如 hep-th,cond-mat">
         </label>
-        <div class="two">
+        <div class="three">
           <label>每天几篇<input id="cfgTopN" type="number" min="1" max="12" value="5"></label>
-          <label>保留天数<input id="cfgKeep" type="number" min="7" max="365" value="60"></label>
+          <label>卡片保留<input id="cfgKeep" type="number" min="7" max="365" value="60"></label>
+          <label>插图保留<input id="cfgFig" type="number" min="7" max="365" value="30"></label>
         </div>
+        <span class="hint" style="font-family:var(--sans);font-size:10.5px;letter-spacing:0;color:#4e5a63">
+          插图默认 30 天清一次，卡片文字保留更久。删图后那天仍能打开，只是显示 NO FIGURE。
+        </span>
       </div>
 
       <div class="form">

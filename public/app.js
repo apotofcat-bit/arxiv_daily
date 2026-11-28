@@ -547,13 +547,14 @@ async function showSettings() {
   let cfg;
   try { cfg = await LocalEngine.loadCfg(); }
   catch (e) { cfg = { baseUrl: 'https://api.deepseek.com/v1', model: 'deepseek-chat',
-                      categories: ['astro-ph.GA'], topN: 5, keepDays: 60 }; }
+                      categories: ['astro-ph.GA'], topN: 5, keepDays: 60, figPurgeDays: 30 }; }
   $('cfgKey').value = cfg.apiKey || '';
   $('cfgBase').value = cfg.baseUrl || '';
   $('cfgModel').value = cfg.model || '';
   $('cfgInterest').value = cfg.interest || '';
   $('cfgTopN').value = cfg.topN || 5;
   $('cfgKeep').value = cfg.keepDays || 60;
+  $('cfgFig').value = cfg.figPurgeDays || 30;
 
   const chosen = new Set(cfg.categories || []);
   const box = $('cfgCats'); box.innerHTML = '';
@@ -601,6 +602,7 @@ function collectCfg() {
     categories: [...new Set([...cats, ...custom])],
     topN: Math.max(1, Math.min(12, parseInt($('cfgTopN').value, 10) || 5)),
     keepDays: Math.max(7, Math.min(365, parseInt($('cfgKeep').value, 10) || 60)),
+    figPurgeDays: Math.max(7, Math.min(365, parseInt($('cfgFig').value, 10) || 30)),
   };
 }
 

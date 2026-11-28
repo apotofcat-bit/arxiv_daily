@@ -73,7 +73,8 @@ const DEFAULT_CFG = {
   categories: ['astro-ph.GA'],
   interest: '',
   topN: 5,
-  keepDays: 60,
+  keepDays: 60,      // 整天保留多少天
+  figPurgeDays: 30,  // 插图单独保留多少天（超期只删图，卡片文字留着）
 };
 let CFG = { ...DEFAULT_CFG };
 
@@ -443,7 +444,10 @@ async function runDaily(onProgress) {
 /* ---------------- 维护 ---------------- */
 async function prune() {
   const keep = CFG.keepDays || 60;
-  const keys = (await idbKeys('days')).sort().reverse();
+  const figKeep = Math.min(CFG.figPurgeDays || 30, keep);
+  const keys = (await idbKeys('days')).sort().reverse();   // 新 -> 旧
+
+  // ① 超出「整天保留」的直接删掉（含图）
   const drop = keys.slice(keep);
   for (const d of drop) {
     const day = await idbGet('days', d);
@@ -452,7 +456,27 @@ async function prune() {
     }
     await idbDel('days', d).catch(() => {});
   }
-  return drop.length;
+
+  // ② 在「整天保留」之内、但超出「插图保留」的：只删图，卡片留着
+  const strip = keys.slice(figKeep, keep);
+  let purged = 0;
+  for (const d of strip) {
+    const day = await idbGet('days', d);
+    if (!day || day.figsPurged) continue;
+    for (const p of day.papers || []) {
+      for (const f of p.figures || []) {
+        await idbDel('figures', f.file).catch(() => {});
+        purged++;
+      }
+      p.figures = [];       // 界面上会显示 NO FIGURE
+    }
+    day.figsPurged = true;
+    await idbPut('days', day, d);
+  }
+  if (drop.length || purged) {
+    console.info(`[prune] 删除 ${drop.length} 天，清理 ${purged} 张过期插图`);
+  }
+  return { days: drop.length, figures: purged };
 }
 
 async function listDays() { return (await idbKeys('days')).sort().reverse(); }
