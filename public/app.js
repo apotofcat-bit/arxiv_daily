@@ -88,14 +88,42 @@ async function resolveBase() {
 }
 
 async function loadIndex() {
+  let remote = { days: [], history: [], price: null };
   try {
     const r = await fetch(BASE + 'data/index.json', { cache: 'no-store' });
-    if (!r.ok) throw new Error(r.status);
-    return await r.json();
-  } catch (e) { console.warn('index.json 失败', e); return { days: [] }; }
+    if (r.ok) remote = await r.json();
+  } catch (e) { console.warn('index.json 失败', e); }
+
+  let localDays = [];
+  if (window.LocalEngine) {
+    try { localDays = await LocalEngine.listDays(); } catch (e) {}
+  }
+  const days = [...new Set([...localDays, ...(remote.days || [])])]
+    .filter(Boolean).sort().reverse();
+  return { days, history: remote.history || [], price: remote.price || null };
 }
 async function getDay(date) {
   if (state.dayCache[date]) return state.dayCache[date];
+
+  // 本地生成的优先
+  if (window.LocalEngine) {
+    try {
+      const local = await LocalEngine.getDay(date);
+      if (local) {
+        for (const p of local.papers) {
+          for (const f of p.figures || []) {
+            const u = await LocalEngine.figureURL(f.file);
+            if (u) f.file = u;
+          }
+        }
+        local._base = '';
+        local._local = true;
+        state.dayCache[date] = local;
+        return local;
+      }
+    } catch (e) { console.warn('本地读取失败', e); }
+  }
+
   let d = null, usedBase = '';
   for (const base of BASE ? [BASE, ''] : ['']) {
     try {
@@ -122,6 +150,7 @@ function baseOf(p) {
 function route() {
   const h = location.hash.replace(/^#\/?/, '');
   const parts = h.split('/').filter(Boolean);
+  if (parts[0] === 'settings') return showSettings();
   if (parts[0] === 'cal') return showCal();
   if (parts[0] === 'stats') return showStats();
   if (parts[0] === 'd' && parts[1]) {
@@ -129,7 +158,9 @@ function route() {
   }
   return showList(null);
 }
-function hideAll() { ['view-list', 'view-detail', 'view-cal', 'view-stats'].forEach(v => { $(v).hidden = true; }); }
+function hideAll() {
+  ['view-list', 'view-detail', 'view-cal', 'view-stats', 'view-settings'].forEach(v => { $(v).hidden = true; });
+}
 
 /* ---------------- 列表 ---------------- */
 async function showList(date) {
@@ -500,6 +531,152 @@ function bindIO() {
 }
 
 
+
+/* ---------------- 设置 ---------------- */
+const CATS = ['astro-ph.GA','astro-ph.CO','astro-ph.HE','astro-ph.SR','cs.CL','cs.CV','cs.LG','stat.ML'];
+
+async function showSettings() {
+  hideAll();
+  $('view-settings').hidden = false;
+  $('brandTag').textContent = 'SETTINGS';
+
+  if (!window.LocalEngine) {
+    $('cfgStatus').textContent = '本地引擎不可用（需在 App 内运行）';
+    return;
+  }
+  let cfg;
+  try { cfg = await LocalEngine.loadCfg(); }
+  catch (e) { cfg = { baseUrl: 'https://api.deepseek.com/v1', model: 'deepseek-chat',
+                      categories: ['astro-ph.GA'], topN: 5, keepDays: 60 }; }
+  $('cfgKey').value = cfg.apiKey || '';
+  $('cfgBase').value = cfg.baseUrl || '';
+  $('cfgModel').value = cfg.model || '';
+  $('cfgInterest').value = cfg.interest || '';
+  $('cfgTopN').value = cfg.topN || 5;
+  $('cfgKeep').value = cfg.keepDays || 60;
+
+  const chosen = new Set(cfg.categories || []);
+  const box = $('cfgCats'); box.innerHTML = '';
+  CATS.forEach(c => {
+    const l = document.createElement('label');
+    l.className = chosen.has(c) ? 'on' : '';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.value = c; cb.checked = chosen.has(c);
+    cb.onchange = () => l.classList.toggle('on', cb.checked);
+    l.appendChild(cb); l.appendChild(document.createTextNode(c));
+    box.appendChild(l);
+  });
+  const extra = (cfg.categories || []).filter(c => !CATS.includes(c));
+  $('cfgCatCustom').value = extra.join(',');
+
+  $('cfgMode').textContent = LocalEngine.hasKey() ? 'LOCAL' : 'REMOTE';
+  refreshDataInfo();
+  $('cfgStatus').textContent = '—';
+}
+
+async function refreshDataInfo() {
+  try {
+    const days = await LocalEngine.listDays();
+    let bytes = 0;
+    try {
+      if (navigator.storage && navigator.storage.estimate) {
+        const est = await navigator.storage.estimate();
+        bytes = est.usage || 0;
+      }
+    } catch (e) {}
+    $('cfgDataInfo').textContent = days.length
+      ? `本机已有 ${days.length} 天（${days[days.length - 1]} ~ ${days[0]}），占用约 ${(bytes / 1048576).toFixed(1)} MB。`
+      : '本机还没有数据。填好 key 和研究方向后点「立即生成」。';
+  } catch (e) {}
+}
+
+function collectCfg() {
+  const cats = [...$('cfgCats').querySelectorAll('input:checked')].map(i => i.value);
+  const custom = ($('cfgCatCustom').value || '').split(/[,，\s]+/).filter(Boolean);
+  return {
+    apiKey: $('cfgKey').value.trim(),
+    baseUrl: ($('cfgBase').value.trim() || 'https://api.deepseek.com/v1'),
+    model: ($('cfgModel').value.trim() || 'deepseek-chat'),
+    interest: $('cfgInterest').value.trim(),
+    categories: [...new Set([...cats, ...custom])],
+    topN: Math.max(1, Math.min(12, parseInt($('cfgTopN').value, 10) || 5)),
+    keepDays: Math.max(7, Math.min(365, parseInt($('cfgKeep').value, 10) || 60)),
+  };
+}
+
+function bindSettings() {
+  if (!window.LocalEngine) return;
+  $('btnEye').onclick = () => {
+    const k = $('cfgKey');
+    k.type = k.type === 'password' ? 'text' : 'password';
+    $('btnEye').textContent = k.type === 'password' ? '显示' : '隐藏';
+  };
+  $('btnSave').onclick = async () => {
+    const cfg = collectCfg();
+    if (!cfg.categories.length) { $('cfgStatus').textContent = '至少选一个分类'; return; }
+    await LocalEngine.saveCfg(cfg);
+    $('cfgStatus').textContent = '已保存 ' + new Date().toTimeString().slice(0, 5);
+    $('cfgMode').textContent = LocalEngine.hasKey() ? 'LOCAL' : 'REMOTE';
+    state.index = await loadIndex();
+    state.dayCache = {};
+  };
+  $('btnTest').onclick = async () => {
+    $('cfgStatus').textContent = '测试中…';
+    await LocalEngine.saveCfg(collectCfg());
+    try {
+      const r = await fetch(BASE + 'data/index.json', { cache: 'no-store' });
+      $('cfgStatus').textContent = '远程数据源 ' + (r.ok ? '正常' : '异常 ' + r.status);
+    } catch (e) {
+      $('cfgStatus').textContent = '远程不可达（本地模式不受影响）';
+    }
+  };
+  $('btnGen').onclick = () => startGenerate();
+  $('btnClear').onclick = async () => {
+    if (!confirm('会删掉本机生成的所有日报和图片，确定？')) return;
+    await LocalEngine.clearAll();
+    state.dayCache = {};
+    state.index = await loadIndex();
+    refreshDataInfo();
+    $('cfgStatus').textContent = '已清空';
+  };
+  $('genClose').onclick = () => { $('genOverlay').hidden = true; };
+}
+
+async function startGenerate() {
+  await LocalEngine.saveCfg(collectCfg());
+  if (!LocalEngine.hasKey()) { $('cfgStatus').textContent = '先填 API Key'; return; }
+
+  const ov = $('genOverlay'); ov.hidden = false;
+  $('genClose').disabled = true;
+  $('genFill').style.width = '0%';
+  $('genPct').textContent = '0%';
+  $('genMsg').textContent = '准备中…';
+
+  try {
+    const res = await LocalEngine.runDaily(({ msg, pct }) => {
+      $('genMsg').textContent = msg;
+      $('genFill').style.width = pct + '%';
+      $('genPct').textContent = pct + '%';
+    });
+    if (res && res.skipped) {
+      $('genMsg').textContent = res.reason + '（' + res.date + '）';
+    } else if (res) {
+      $('genMsg').textContent = `完成：${res.papers.length} 篇 · ${res.usage.total} tokens`;
+      state.dayCache = {};
+      state.index = await loadIndex();
+    }
+    $('genFill').style.width = '100%';
+    $('genPct').textContent = '100%';
+    $('genClose').disabled = false;
+    $('genClose').textContent = '完成';
+    await refreshDataInfo();
+  } catch (e) {
+    $('genMsg').textContent = '失败：' + e.message;
+    $('genClose').disabled = false;
+    $('genClose').textContent = '关闭';
+  }
+}
+
 /* ---------------- 图片查看器 ---------------- */
 const V = { paper: null, i: 0, open: false, scale: 1, tx: 0, ty: 0,
             sx: 0, sy: 0, ox: 0, oy: 0, moved: false, downAt: 0, lastTap: 0 };
@@ -634,6 +811,7 @@ async function boot() {
   state.index = await loadIndex();
   bindIO();
   bindViewer();
+  bindSettings();
 
   window.addEventListener('hashchange', route);
   await route();

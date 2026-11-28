@@ -45,6 +45,7 @@
     <div class="chips chrome">
       <span class="chip"><i></i><span id="chipSync">--</span></span>
       <a class="chip" href="#/cal"><i></i>ARCHIVE</a>
+      <a class="chip" href="#/settings"><i></i>⚙</a>
       <a class="chip tok push" href="#/stats"><i></i><span id="chipTok">-- TOKENS</span></a>
     </div>
   </section>
@@ -206,12 +207,82 @@
     <div class="vthumbs" id="vThumbs"></div>
   </div>
 
+  <!-- ============ 设置 ============ -->
+  <section id="view-settings" class="view" hidden>
+    <div class="detail">
+      <div class="crumb"><a href="#/">← TODAY</a><span>SETTINGS</span></div>
+
+      <div class="sec2">模型</div>
+      <div class="form">
+        <label>DeepSeek API Key
+          <div class="keyrow">
+            <input id="cfgKey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-…">
+            <button class="btn ghost small" id="btnEye">显示</button>
+          </div>
+          <span class="hint">只存在这台手机上，不会上传，也不会打进 APK。</span>
+        </label>
+        <label>Base URL
+          <input id="cfgBase" type="url" spellcheck="false" placeholder="https://api.deepseek.com/v1">
+        </label>
+        <label>模型
+          <input id="cfgModel" type="text" spellcheck="false" placeholder="deepseek-chat">
+        </label>
+      </div>
+
+      <div class="sec2">看什么</div>
+      <div class="form">
+        <label>研究方向
+          <textarea id="cfgInterest" rows="3" placeholder="例如：观察高红移星系的星际介质与化学演化，关注 JWST/ALMA 的光谱观测"></textarea>
+          <span class="hint">用自然语言写就行，模型靠它挑文章。</span>
+        </label>
+        <label>arXiv 分类
+          <div class="cats" id="cfgCats"></div>
+          <input id="cfgCatCustom" type="text" spellcheck="false" placeholder="其它分类用逗号分隔，如 hep-th,cond-mat">
+        </label>
+        <div class="two">
+          <label>每天几篇<input id="cfgTopN" type="number" min="1" max="12" value="5"></label>
+          <label>保留天数<input id="cfgKeep" type="number" min="7" max="365" value="60"></label>
+        </div>
+      </div>
+
+      <div class="form">
+        <button class="btn" id="btnSave">保存设置</button>
+        <button class="btn ghost" id="btnTest">测试连接</button>
+      </div>
+      <div class="savedline"><span id="cfgStatus">—</span></div>
+
+      <div class="sec2">本地数据</div>
+      <p class="x" id="cfgDataInfo" style="font-size:11.5px"></p>
+      <div class="form">
+        <button class="btn" id="btnGen">立即生成今天的日报</button>
+        <button class="btn ghost" id="btnClear">清空本地数据</button>
+      </div>
+      <div style="height:22px"></div>
+    </div>
+    <div class="chips chrome">
+      <span class="chip"><i></i><span id="cfgMode">—</span></span>
+      <a class="chip tok push" href="#/">BACK</a>
+    </div>
+  </section>
+
+  <!-- ============ 生成进度 ============ -->
+  <div id="genOverlay" class="genov" hidden>
+    <div class=" genbox">
+      <div class="gtitle">正在生成今天的日报</div>
+      <div class="gmsg" id="genMsg">准备中…</div>
+      <div class="gtrack"><div class="gfill" id="genFill"></div></div>
+      <div class="gpct" id="genPct">0%</div>
+      <button class="btn ghost" id="genClose" disabled>关闭</button>
+    </div>
+  </div>
+
 </div>
 
 <script src="vendor/live2dcubismcore.min.js"></script>
 <script src="vendor/pixi.min.js"></script>
 <script src="vendor/cubism4.min.js"></script>
 <script src="config.js"></script>
+<script src="local.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
