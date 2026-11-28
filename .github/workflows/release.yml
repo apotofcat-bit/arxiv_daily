@@ -1,0 +1,45 @@
+name: release
+
+# 打 tag 就自动发 Release，并把 APK 挂上去。
+# 用的是 workflow 内置的 GITHUB_TOKEN，不需要任何个人凭据。
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 校验 APK 存在
+        run: |
+          ls -lh public/amadeus-daily.apk
+          sha256sum public/amadeus-daily.apk
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: public/amadeus-daily.apk
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          body: |
+            ## 安装
+
+            下载下面的 `amadeus-daily.apk`（9.4 MB，Android 8+），安装后：
+
+            1. 打开 App → 底部 **⚙**
+            2. 填 **DeepSeek API Key** 和 **研究方向**
+            3. 点 **运行自检**（三项都绿）
+            4. 点 **立即生成今天的日报**
+
+            详细说明见 [README](https://github.com/apotofcat-bit/arxiv_daily#readme)。
+
+            ## 校验
+
+            ```
+            sha256: ${{ github.sha }}
+            ```
