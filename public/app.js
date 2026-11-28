@@ -20,8 +20,6 @@ const el = (tag, cls, txt) => {
 
 const NOTES_KEY = 'amadeus.notes.v1';
 const FB_KEY = 'amadeus.feedback.v1';
-let BASE = '';                 // '' = 包内快照；否则为远程前缀
-const REMOTE_TIMEOUT = 4000;
 
 const state = {
   index: null,
@@ -70,80 +68,32 @@ function setFb(id, vote, meta) {
 }
 
 /* ---------------- 数据 ---------------- */
-async function resolveBase() {
-  const rb = (window.REMOTE_BASE || '').trim();
-  BASE = '';
-  if (!rb) return;
-  // 同源就是自己，不用探测
-  if (rb.startsWith(location.origin)) return;
-  try {
-    const ctl = new AbortController();
-    const timer = setTimeout(() => ctl.abort(), REMOTE_TIMEOUT);
-    const r = await fetch(rb + 'data/index.json', { cache: 'no-store', signal: ctl.signal });
-    clearTimeout(timer);
-    if (r.ok) { BASE = rb; console.info('[amadeus] 远程数据源', rb); }
-  } catch (e) {
-    console.info('[amadeus] 远程不可达，使用内置快照');
-  }
-}
+const DEFAULT_PRICE = { input_per_m: 0.27, output_per_m: 1.10, currency: 'USD', symbol: '$' };
 
 async function loadIndex() {
-  let remote = { days: [], history: [], price: null };
-  try {
-    const r = await fetch(BASE + 'data/index.json', { cache: 'no-store' });
-    if (r.ok) remote = await r.json();
-  } catch (e) { console.warn('index.json 失败', e); }
-
-  let localDays = [];
+  let days = [], history = [];
   if (window.LocalEngine) {
-    try { localDays = await LocalEngine.listDays(); } catch (e) {}
+    try {
+      days = await LocalEngine.listDays();
+      history = await LocalEngine.usageStats();
+    } catch (e) { console.warn('本地索引读取失败', e); }
   }
-  const days = [...new Set([...localDays, ...(remote.days || [])])]
-    .filter(Boolean).sort().reverse();
-  return { days, history: remote.history || [], price: remote.price || null };
+  return { days, history, price: DEFAULT_PRICE };
 }
 async function getDay(date) {
   if (state.dayCache[date]) return state.dayCache[date];
-
-  // 本地生成的优先
-  if (window.LocalEngine) {
-    try {
-      const local = await LocalEngine.getDay(date);
-      if (local) {
-        for (const p of local.papers) {
-          for (const f of p.figures || []) {
-            const u = await LocalEngine.figureURL(f.file);
-            if (u) f.file = u;
-          }
-        }
-        local._base = '';
-        local._local = true;
-        state.dayCache[date] = local;
-        return local;
-      }
-    } catch (e) { console.warn('本地读取失败', e); }
+  if (!window.LocalEngine) throw new Error('本地引擎不可用');
+  const local = await LocalEngine.getDay(date);
+  if (!local) throw new Error('这天没有数据');
+  for (const p of local.papers) {
+    for (const f of p.figures || []) {
+      const u = await LocalEngine.figureURL(f.file);
+      if (u) f.file = u;
+    }
   }
-
-  let d = null, usedBase = '';
-  for (const base of BASE ? [BASE, ''] : ['']) {
-    try {
-      const r = await fetch(`${base}data/${date}.json`, { cache: 'no-store' });
-      if (r.ok) { d = await r.json(); usedBase = base; break; }
-    } catch (e) { /* 试下一个 */ }
-  }
-  if (!d) throw new Error('day ' + date + ' 不存在');
-  d._base = usedBase;
-  d.papers.forEach(p => {
-    p.figures = (p.figures || []).map(f =>
-      typeof f === 'string' ? { file: f, caption: '' } : { file: f.file, caption: f.caption || '' });
-  });
-  state.dayCache[date] = d;
-  return d;
-}
-
-function baseOf(p) {
-  const d = state.day;
-  return (d && d._base) || '';
+  local._local = true;
+  state.dayCache[date] = local;
+  return local;
 }
 
 /* ---------------- 路由 ---------------- */
@@ -171,7 +121,7 @@ async function showList(date) {
 
   const latest = (state.index && state.index.days && state.index.days[0]) || null;
   const target = date || latest;
-  if (!target) { renderEmptyList('NO DATA', '还没有数据。先跑 pipeline/run.py'); return; }
+  if (!target) { renderEmptyList('NO DATA', '还没有数据。填好 API Key 后生成。'); return; }
 
   if (state.date !== target) {
     try {
@@ -186,7 +136,11 @@ async function showList(date) {
 function renderEmptyList(big, msg) {
   $('kScanned').textContent = '--'; $('kMatched').textContent = '--'; $('kToday').textContent = '--';
   $('greeting').textContent = '—'; $('chipSync').textContent = '—'; $('listSec').textContent = 'TODAY';
-  $('list').innerHTML = `<div class="empty"><div class="big">${esc(big)}</div>${esc(msg)}</div>`;
+  $('list').innerHTML =
+    `<div class="empty"><div class="big">${esc(big)}</div>${esc(msg)}` +
+    `<div style="margin-top:20px"><a href="#/settings" style="display:inline-block;color:var(--verm-lt);
+      text-decoration:none;font-family:var(--mono);font-size:9px;letter-spacing:.16em;
+      border:1px solid rgba(185,75,67,.5);padding:10px 16px;border-radius:3px">⚙ 去设置</a></div></div>`;
 }
 
 function renderList() {
@@ -570,7 +524,7 @@ async function showSettings() {
   const extra = (cfg.categories || []).filter(c => !CATS.includes(c));
   $('cfgCatCustom').value = extra.join(',');
 
-  $('cfgMode').textContent = LocalEngine.hasKey() ? 'LOCAL' : 'REMOTE';
+  $('cfgMode').textContent = LocalEngine.hasKey() ? 'KEY SET' : 'NO KEY';
   refreshDataInfo();
   $('cfgStatus').textContent = '—';
 }
@@ -618,20 +572,11 @@ function bindSettings() {
     if (!cfg.categories.length) { $('cfgStatus').textContent = '至少选一个分类'; return; }
     await LocalEngine.saveCfg(cfg);
     $('cfgStatus').textContent = '已保存 ' + new Date().toTimeString().slice(0, 5);
-    $('cfgMode').textContent = LocalEngine.hasKey() ? 'LOCAL' : 'REMOTE';
+    $('cfgMode').textContent = LocalEngine.hasKey() ? 'KEY SET' : 'NO KEY';
     state.index = await loadIndex();
     state.dayCache = {};
   };
-  $('btnTest').onclick = async () => {
-    $('cfgStatus').textContent = '测试中…';
-    await LocalEngine.saveCfg(collectCfg());
-    try {
-      const r = await fetch(BASE + 'data/index.json', { cache: 'no-store' });
-      $('cfgStatus').textContent = '远程数据源 ' + (r.ok ? '正常' : '异常 ' + r.status);
-    } catch (e) {
-      $('cfgStatus').textContent = '远程不可达（本地模式不受影响）';
-    }
-  };
+  $('btnTest').onclick = () => { $('btnSelfTest').click(); };
   $('btnSelfTest').onclick = () => runSelfTest();
   $('btnGen').onclick = () => startGenerate();
   $('btnClear').onclick = async () => {
@@ -862,11 +807,7 @@ async function boot() {
 
   const isAppShell = location.host.includes('appassets');
   if (isAppShell) document.body.classList.add('in-app');
-  if ('serviceWorker' in navigator && location.protocol === 'https:' && !isAppShell) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
-  }
 
-  await resolveBase();
   state.index = await loadIndex();
   bindIO();
   bindViewer();

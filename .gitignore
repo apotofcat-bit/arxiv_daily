@@ -1,21 +1,11 @@
-# 依赖
+# 构建产物
+/dist/*.apk
+/android/*.apk
+# 本地缓存
 node_modules/
 pylib/
-.npm-cache/
-
-# 本地缓存与工具
 .chrome/
-pipeline/state/
-*.log
-
-# 构建产物
-../android/
-pipeline/__pycache__/
+.npm-cache/
+pipeline/
 __pycache__/
-public/data/cards-*.json
-
-# 绝不入库的密钥类文件
-.env
-.env.*
-*.key
-secrets.json
+*.log
